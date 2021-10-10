@@ -1,0 +1,187 @@
+"
+" compatibility
+"
+if has("mouse_sgr")
+    set ttymouse=sgr
+else
+    set ttymouse=xterm2
+end
+
+if &term == "st-256color"
+    let &t_SI = "\<Esc>[5 q"
+    let &t_EI = "\<Esc>[1 q"
+    let &t_SR = "\<Esc>[4 q"
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+endif
+
+"
+" appearance
+"
+set background=dark
+set termguicolors
+syntax on
+colorscheme custom
+
+hi Comment gui=italic cterm=italic
+hi Todo gui=italic cterm=italic
+
+
+"
+" settings
+"
+
+"" UI
+set shortmess+=I 
+set guioptions=c!  " remove gvim widgets
+set belloff=all
+set cursorline
+set noswapfile
+set number
+set ruler
+" set showcmd
+set laststatus=0
+set noshowmode
+
+" splits
+set splitright
+set splitbelow
+
+" whitespace
+set tabstop=8
+set softtabstop=0
+set expandtab
+set shiftwidth=4
+set smarttab
+
+" persistant undo
+set undofile
+
+set undodir=$MYVIMRC
+
+
+" searching
+set hlsearch
+set incsearch
+set smartcase
+set ignorecase
+
+" other
+set lazyredraw                     " run macros without updating screen
+set clipboard^=unnamed,unnamedplus " make vim use system clipboard
+set encoding=utf-8                 " unicode characters
+set hidden                         " allow buffer switching without saving
+set backspace=indent,eol,start     " make backspace work as expected
+set mouse=a                        " enable mouse
+set ttimeoutlen=1                  " time waited for terminal codes
+
+
+"
+" plugins
+"
+
+let g:polyglot_disabled = ['autoindent', 'sensible', 'ftdetect']
+
+" vimplug
+call plug#begin("~/.vim/plugged")
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'machakann/vim-swap'
+Plug 'glts/vim-textobj-comment'
+Plug 'tpope/vim-commentary'
+Plug 'kana/vim-textobj-user'
+Plug 'sheerun/vim-polyglot'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'wellle/targets.vim'
+Plug 'machakann/vim-sandwich'
+Plug 'junegunn/vim-easy-align'
+"Plug 'itchyny/lightline.vim'
+call plug#end()
+
+
+"let g:currentmode={
+"       \ 'n'  : 'NORMAL',
+"       \ 'v'  : 'VISUAL',
+"       \ 'V'  : 'VISUAL',
+"       \ "\<C-V>" : 'VISUAL',
+"       \ 'i'  : 'INSERT',
+"       \ 'R'  : 'REPLACE',
+"       \ 'Rv' : 'REPLACE',
+"       \ 'c'  : 'COMMAND',
+"       \}
+"
+"set statusline=\ 
+"set statusline+=%{g:currentmode[mode()]}
+"set statusline+=%{expand('%')==''?'':'\ \ \|\ '.expand('%')}
+"set statusline+=%{&modified?'\ \ \|\ +':''}
+"set statusline+=%=
+"set statusline+=%{&filetype==''?'':&filetype.'\ \|\ '}
+"set statusline+=%{(line('.')<10?'0'.line('.'):line('.')).':'.(col('.')<10?'0'.col('.'):col('.'))}
+"set statusline+=\ 
+
+"set statusline=%f\ %h%w%m%r%=%-14.(%l,%c%V%)\ %P
+
+" NORMAL | ~/k | +             python | 110:43
+"set statusline+=%=([%{&fileformat}]%)
+"set statusline=--%{g:currentmode[mode()]}--\ %F\ %m\ %Y\ [0x\%02.2B]\ 
+"
+" coc settings
+"
+
+" Use tab for trigger completion with characters ahead and navigate.
+" inoremap <silent><expr> <TAB>
+"       \ pumvisible() ? "\<C-n>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
+" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+
+
+"
+" other plugin settings
+"
+
+" vim-easy-align
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+" lightline.vim
+let g:lightline = {'colorscheme': 'darcula'}
+
+" vim-sandwich
+runtime macros/sandwich/keymap/surround.vim
+
+" targets.vim
+autocmd User targets#mappings#user call targets#mappings#extend({
+    \ 'b': {'pair': [{'o':'(', 'c':')'}]}
+    \ })
+nmap cia cIa
+nmap dia dIa
+nmap yia yIa
+
+
+"
+" autocommands
+"
+autocmd BufNewFile,BufRead *.jn setf jnote
+autocmd BufNewFile,BufRead *.tbl setf tablescript
+autocmd FileType * setlocal fo-=c fo-=r fo-=o  " remove autocommenting
+
+
+"
+" mappings
+"
+
+" remove search highlighting
+nnoremap <silent><space> :noh<CR>
+
+" toggle cursor column 
+nnoremap <silent><leader>c :exec &cuc ? "set nocuc" : "set cuc"<CR>
+
+" Make Y act like C and D
+nnoremap Y y$
+
+" Replace Ex mode with run q macro
+nnoremap Q @q
+
+" map <c-k>zs to zero-width space
+exe 'digraph zs ' . 0x200b

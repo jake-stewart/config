@@ -116,8 +116,21 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH="$HOME/.bin:$PATH"
-
 PROMPT_COMMAND="export PROMPT_COMMAND=echo"
 
+[[ -f $HOME/.bin ]] && \
+    export PATH="$HOME/.bin:$PATH"
+
+[[ -f $HOME/.dir_colors ]] && \
+    eval $(dircolors -b $HOME/.dir_colors)
+
 alias py=python3
+
+if command -v tmux &> /dev/null \
+    && [ -n "$PS1" ] \
+    && [[ ! "$TERM" =~ screen ]] \
+    && [[ ! "$TERM" =~ tmux ]] \
+    && [ -z "$TMUX" ]
+then
+    exec $(tmux a 2>/dev/null || tmux)
+fi

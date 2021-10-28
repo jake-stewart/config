@@ -1,7 +1,4 @@
-" onedark ripoff
-
-hi Normal        guifg=#ABB2BF   guibg=NONE      gui=NONE
-"hi Normal        guifg=#ABB2BF   guibg=#1B1B1B      gui=NONE
+hi Normal        guifg=#ABB2BF   guibg=#1B1B1B   gui=NONE
 hi Conceal       guifg=#ABB2BF   guibg=NONE      gui=NONE
 hi Cursor        guifg=#282C34   guibg=#ABB2BF   gui=NONE
 hi CursorLine    guifg=NONE      guibg=#222222   gui=NONE cterm=NONE

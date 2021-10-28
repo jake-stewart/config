@@ -1,6 +1,8 @@
-"
-" compatibility
-"
+
+" COMPATIBILITY
+
+set nocompatible
+
 if has("mouse_sgr")
     set ttymouse=sgr
 else
@@ -13,35 +15,58 @@ if &term == "st-256color"
     let &t_SR = "\<Esc>[4 q"
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    let &t_Cs = "\e[4:3m"
+    let &t_Ce = "\e[4:0m"
 endif
 
-"
-" appearance
-"
+" tmux
+let g:tmux_navigator_no_mappings = 1
+nnoremap <silent> <c-w>h :TmuxNavigateLeft<cr>
+nnoremap <silent> <c-w>j :TmuxNavigateDown<cr>
+nnoremap <silent> <c-w>k :TmuxNavigateUp<cr>
+nnoremap <silent> <c-w>l :TmuxNavigateRight<cr>
+
+command! TmuxQuit call TmuxQuit()
+nnoremap <silent> <c-w>q :TmuxQuit<CR>
+
+
+function! TmuxQuit()
+    if &modified
+        echo "Error: Buffer is modified"
+        return
+    endif
+    if win_getid(2) == 0
+        !tmux killp
+    else
+        quit
+    endif
+endfunction
+
+
+" APPEARANCE
+
 set background=dark
 set termguicolors
 syntax on
 colorscheme custom
 
+set shortmess+=I   " remove start page
+set guioptions=c!  " remove gvim widgets
+set noshowmode     " hide --INSERT--
+set laststatus=0   " hide statusbar
+set ruler
+set number
+set cursorline
+set belloff=all    " disable sound
+set showcmd
+
 hi Comment gui=italic cterm=italic
 hi Todo gui=italic cterm=italic
 
 
-"
-" settings
-"
+" SETTINGS
 
-"" UI
-set shortmess+=I 
-set guioptions=c!  " remove gvim widgets
-set belloff=all
-set cursorline
 set noswapfile
-set number
-set ruler
-" set showcmd
-set laststatus=0
-set noshowmode
 
 " splits
 set splitright
@@ -55,10 +80,8 @@ set shiftwidth=4
 set smarttab
 
 " persistant undo
+exe "set undodir=" . fnamemodify($MYVIMRC, ":h") . "/undodir"
 set undofile
-
-set undodir=$MYVIMRC
-
 
 " searching
 set hlsearch
@@ -76,15 +99,13 @@ set mouse=a                        " enable mouse
 set ttimeoutlen=1                  " time waited for terminal codes
 
 
-"
-" plugins
-"
+" PLUGINS
 
 let g:polyglot_disabled = ['autoindent', 'sensible', 'ftdetect']
 
 " vimplug
 call plug#begin("~/.vim/plugged")
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'christoomey/vim-tmux-navigator'
 Plug 'machakann/vim-swap'
 Plug 'glts/vim-textobj-comment'
 Plug 'tpope/vim-commentary'
@@ -94,51 +115,11 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'wellle/targets.vim'
 Plug 'machakann/vim-sandwich'
 Plug 'junegunn/vim-easy-align'
-"Plug 'itchyny/lightline.vim'
+Plug 'itchyny/lightline.vim'
 call plug#end()
 
 
-"let g:currentmode={
-"       \ 'n'  : 'NORMAL',
-"       \ 'v'  : 'VISUAL',
-"       \ 'V'  : 'VISUAL',
-"       \ "\<C-V>" : 'VISUAL',
-"       \ 'i'  : 'INSERT',
-"       \ 'R'  : 'REPLACE',
-"       \ 'Rv' : 'REPLACE',
-"       \ 'c'  : 'COMMAND',
-"       \}
-"
-"set statusline=\ 
-"set statusline+=%{g:currentmode[mode()]}
-"set statusline+=%{expand('%')==''?'':'\ \ \|\ '.expand('%')}
-"set statusline+=%{&modified?'\ \ \|\ +':''}
-"set statusline+=%=
-"set statusline+=%{&filetype==''?'':&filetype.'\ \|\ '}
-"set statusline+=%{(line('.')<10?'0'.line('.'):line('.')).':'.(col('.')<10?'0'.col('.'):col('.'))}
-"set statusline+=\ 
-
-"set statusline=%f\ %h%w%m%r%=%-14.(%l,%c%V%)\ %P
-
-" NORMAL | ~/k | +             python | 110:43
-"set statusline+=%=([%{&fileformat}]%)
-"set statusline=--%{g:currentmode[mode()]}--\ %F\ %m\ %Y\ [0x\%02.2B]\ 
-"
-" coc settings
-"
-
-" Use tab for trigger completion with characters ahead and navigate.
-" inoremap <silent><expr> <TAB>
-"       \ pumvisible() ? "\<C-n>" :
-"       \ <SID>check_back_space() ? "\<TAB>" :
-"       \ coc#refresh()
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-
-
-"
-" other plugin settings
-"
+" OTHER PLUGIN SETTINGS
 
 " vim-easy-align
 xmap ga <Plug>(EasyAlign)
@@ -159,17 +140,17 @@ nmap dia dIa
 nmap yia yIa
 
 
-"
-" autocommands
-"
+" AUTOCOMMANDS
+
 autocmd BufNewFile,BufRead *.jn setf jnote
 autocmd BufNewFile,BufRead *.tbl setf tablescript
 autocmd FileType * setlocal fo-=c fo-=r fo-=o  " remove autocommenting
 
+" go to last position before exiting vim
+au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
 
-"
-" mappings
-"
+
+" MAPPINGS
 
 " remove search highlighting
 nnoremap <silent><space> :noh<CR>

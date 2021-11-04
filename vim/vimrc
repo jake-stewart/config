@@ -9,7 +9,7 @@ else
     set ttymouse=xterm2
 end
 
-if &term == "st-256color"
+if &term == "xterm-256color"
     let &t_SI = "\<Esc>[5 q"
     let &t_EI = "\<Esc>[1 q"
     let &t_SR = "\<Esc>[4 q"
@@ -45,6 +45,10 @@ endfunction
 
 " APPEARANCE
 
+
+
+set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:~:h\")})%)%(\ %a%)
+"set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:~:.:h\")})%)%(\ %a%)
 set background=dark
 set termguicolors
 syntax on
@@ -110,12 +114,13 @@ Plug 'machakann/vim-swap'
 Plug 'glts/vim-textobj-comment'
 Plug 'tpope/vim-commentary'
 Plug 'kana/vim-textobj-user'
+Plug 'bfrg/vim-cpp-modern'
 Plug 'sheerun/vim-polyglot'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'wellle/targets.vim'
 Plug 'machakann/vim-sandwich'
 Plug 'junegunn/vim-easy-align'
-Plug 'itchyny/lightline.vim'
+"Plug 'itchyny/lightline.vim'
 call plug#end()
 
 

@@ -40,6 +40,8 @@ set termguicolors
 syntax on
 colorscheme custom
 
+set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:~:h\")})%)%(\ %a%)
+
 set shortmess+=I   " remove start page
 set guioptions=c!  " remove gvim widgets
 set noshowmode     " hide --INSERT--
@@ -64,7 +66,6 @@ set hlsearch
 
 " other
 set mouse=a
-set scrolloff=0
 set timeoutlen=0
 set ttimeoutlen=0
 set wrapscan
@@ -86,6 +87,19 @@ au TerminalWinOpen * set t_ve&vim
 au CmdLineEnter * set t_ve&vim
 au CmdLineLeave * if &buftype != 'terminal' | set t_ve= | endif
 
+function! ManTitleString()
+    if &filetype == "man"
+        let l:line = substitute(getline('1'), '(\d\+)\zs.*', '', '')
+        let l:line = substitute(l:line, '(', ' (', '')
+        let l:line = 'man ' . tolower(l:line)
+        let l:line = substitute(l:line, '\s\+', '\\ ', 'g')
+        exe 'set titlestring=' . l:line
+    else
+        set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:~:h\")})%)%(\ %a%)
+    endif
+endfunction
+
+au BufWinEnter,WinEnter,FileType * call ManTitleString()
 
 
 " FIX VIM PAGER
@@ -95,6 +109,7 @@ au CmdLineLeave * if &buftype != 'terminal' | set t_ve= | endif
 au VimEnter * call FixVimpager()
 
 function FixVimpager()
+    set scrolloff=0
 
     " stop this function running again
     au! VimEnter

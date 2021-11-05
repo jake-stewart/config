@@ -118,7 +118,7 @@ fi
 
 PROMPT_COMMAND="export PROMPT_COMMAND=echo"
 
-[[ -f $HOME/.bin ]] && \
+[[ -d $HOME/.bin ]] && \
     export PATH="$HOME/.bin:$PATH"
 
 [[ -f $HOME/.dir_colors ]] && \

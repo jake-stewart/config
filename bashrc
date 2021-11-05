@@ -116,7 +116,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# add newline after every command, except clear
 PROMPT_COMMAND="export PROMPT_COMMAND=echo"
+alias clear='PROMPT_COMMAND="export PROMPT_COMMAND=echo"; clear'
 
 [[ -d $HOME/.bin ]] && \
     export PATH="$HOME/.bin:$PATH"

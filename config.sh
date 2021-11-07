@@ -6,55 +6,355 @@ usage() {
     echo "Usage: $0 [OPTION]"
     echo
     echo "OPTIONS:"
-    echo "   --apply     Apply configs to the system. If a config already"
-    echo "               exists, the script will abort without making any"
-    echo "               changes."
+    echo "   --apply         Backup existing configs and then apply configs"
+    echo "                   found in $CONFIG_LIST_FILE to the system."
     echo
-    echo "   --force     Apply configs to the sytem without aborting when"
-    echo "               configs already exist. Configs that already"
-    echo "               exist will be backed up."
+    echo "   --backup        Backup existing configs without applying"
+    echo "                   any changes."
     echo
-    echo "   --update    Use the configs the system already has to update"
-    echo "               the configs used by this script."
+    echo "   --update        Use existing configs to update configs found"
+    echo "                   in $CONFIG_LIST_FILE."
     echo
-    echo "   --restore   Restore previous configs from backup."
+    echo "   --restore       Restore existing configs from backup and delete"
+    echo "                   any files/dirs that did not exist previously."
     echo
-    echo "   --delete    Delete backup of previous configs."
+    echo "   --safe-restore  Restore existing configs from backup but do not"
+    echo "                   delete anything."
+    echo
+    echo "   --delete        Delete backup of existing configs."
 }
 
-if [ "$#" -ne 1 ]; then
-    usage
-    exit 0
-fi
-
-
-backup_dir="$HOME/.cache/config_backup"
-
-
+error_flag=0
 error() {
-    echo
-    echo "Error(s) found, aborted."
+    error_flag=1
+    echo "ERROR: $1" > /dev/stderr
 }
 
-success() {
-    echo
-    echo "Command completed successfully"
+
+read_config_list() {
+    echo "Reading $CONFIG_LIST_FILE..."
+    if [[ ! -f "$CONFIG_LIST_FILE" ]]; then
+        error "$CONFIG_LIST_FILE not found"
+        return
+    fi
+
+    sources=( $(awk '/^\s*[^# \t]/{print $1}' "$CONFIG_LIST_FILE") )
+    dests=( $(awk '/^\s*[^# \t]/{print $2}' "$CONFIG_LIST_FILE") )
+
+    N_CONFIGS="${#sources[@]}"
+
+    # expand dest (eg. $HOME -> /home/user/)
+    for ((i = 0; i < N_CONFIGS; i++)); do
+        dests[$i]=$(eval echo "${dests[i]}")
+    done
+
+    [[ "$error_flag" == 0 ]] && echo "No errors found."
 }
 
-case "$1" in
-    "--force")
-        force=1
+validate_sources() {
+    echo
+    echo "Validating sources..."
+    validated=()
+    for ((i = 0; i < N_CONFIGS; i++)); do
+        src="${sources[i]}"
+
+        is_dupe=0
+        for v_src in "${validated[@]}"; do
+            if [[ "$v_src" == "$src" ]]; then
+                is_dupe=1
+                break
+            fi
+        done
+        [[ "$is_dupe" == 1 ]] && continue
+
+        is_duped=0
+        for ((j = i+1; j < N_CONFIGS; j++)); do
+            if [[ "$src" == "${sources[j]}" ]]; then
+                is_duped=1
+                break
+            fi
+        done
+
+        if [[ "$is_duped" == 1 ]]; then
+            error "$src is duplicated"
+        fi
+
+        if [[ ! "$src" =~ ^(\/?[a-zA-Z0-9_.-])+$ ]]; then
+            error "$src is not a valid path"
+        elif [[ ! -e "$src" ]]; then
+            error "$src does not exist"
+        elif [[ ! -f "$src" ]]; then
+            error "$src is not a file"
+        fi
+        validated+=("$src")
+    done
+
+    [[ "$error_flag" == 0 ]] && echo "No errors found."
+}
+
+validate_dests() {
+    echo
+    echo "Validating destinations..."
+    validated=()
+    for ((i = 0; i < N_CONFIGS; i++)); do
+        dest="${dests[i]}"
+
+        is_dupe=0
+        for v_dest in "${validated[@]}"; do
+            if [[ "$v_dest" == "$dest" ]]; then
+                is_dupe=1
+                break
+            fi
+        done
+        [[ "$is_dupe" == 1 ]] && continue
+
+        is_duped=0
+        for ((j = i+1; j < N_CONFIGS; j++)); do
+            if [[ "$dest" == "${dests[j]}" ]]; then
+                is_duped=1
+                break
+            fi
+        done
+
+
+        if [[ "$is_duped" == 1 ]]; then
+            error "$dest is duplicated"
+        fi
+
+        if [[ ! "$dest" =~ ^(\/?[a-zA-Z0-9_.-])+$ ]]; then
+            error "$dest is not a valid path"
+        elif [[ -e "$dest" ]]; then
+            if [[ -f "$dest" ]]; then
+                if [[ ! -w "$dest" ]]; then
+                    error "$dest exists but is not writable"
+                fi
+            else
+                error "$dest exists but is not a file"
+            fi
+        else
+            parent=$(dirname "$dest")
+            while true; do
+                if [[ -e "$parent" ]]; then
+                    if [[ -d "$parent" ]]; then
+                        if [[ -w "$parent" ]]; then
+                            break
+                        else
+                            error "$dest does not exist and cannot be created since $parent is not writable"
+                            break
+                        fi
+                    fi
+                    error "$dest does not exist and cannot be created since $parent is not a directory"
+                    break
+                fi
+                parent=$(dirname "$parent")
+            done
+        fi
+        validated+=("$dest")
+    done
+
+    [[ "$error_flag" == 0 ]] && echo "No errors found."
+}
+
+
+
+
+create_dirs_helper() {
+    local parent=$(dirname "$1")
+    local path=$2
+
+    if [[ -e "$parent" ]]; then
+        if [[ ! -d "$parent" ]]; then
+            error "Cannot create $path since $parent exists and is not a directory"
+            exit 1
+        elif [[ ! -w "$parent" ]]; then
+            error "Cannot create $path since $parent exists and is not writable"
+            exit 1
+        fi
+    else
+        create_dirs_helper "$parent" "$path"
+        echo "$parent"
+        mkdir "$parent"
+    fi
+}
+
+create_dirs() {
+    path="$1"
+    if [[ -e "$path" ]]; then
+        if [[ ! -d "$path" ]]; then
+            error "Cannot create $path since it exists and is not a directory"
+            exit 1
+        fi
+    else
+        create_dirs_helper "$path" "$path"
+        echo "$path"
+        mkdir "$path"
+    fi
+}
+
+backup_dests() {
+    echo
+    echo "Backing up configs..."
+
+    if [[ -e "$BACKUP_DIR" ]]; then
+        printf "A backup already exists. Delete? (y/N) "
+        read response
+        case "$response" in
+            "y" | "yes" | "Y" | "Yes" | "YES")
+                rm -rf "$BACKUP_DIR"
+                ;;
+            *)
+                echo "Aborted."
+                exit 0
+                ;;
+        esac
+    fi
+
+    create_dirs "$BACKUP_DIR" > /dev/null
+
+    for ((i = 0; i < N_CONFIGS; i++)); do
+        dest="$BACKUP_DIR/${sources[i]}"
+        src="${dests[i]}"
+        if [[ -e "$src" ]]; then
+            mkdir -p "$(dirname "$dest")"
+            cp "$src" "$dest"
+        fi
+    done
+    echo "Configs backed up to $BACKUP_DIR."
+}
+
+apply_sources() {
+    echo
+    echo "Applying sources..."
+    for ((i = 0; i < N_CONFIGS; i++)); do
+        parent=$(dirname "${dests[i]}")
+        if [[ ! -e "$parent" ]]; then
+            created_files+=( $(create_dirs "$parent") )
+        fi
+        if [[ ! -e "${dests[i]}" ]]; then
+            created_files+=("${dests[i]}")
+        fi
+        cp "${sources[i]}" "${dests[i]}"
+    done
+    echo "Done."
+}
+
+restore_backup() {
+    echo
+    echo "Restoring backup..."
+
+    if [[ ! -e "$BACKUP_DIR" ]]; then
+        error "No backup directory exists"
+        exit 1
+    elif [[ ! -d "$BACKUP_DIR" ]]; then
+        error "$BACKUP_DIR is not a directory"
+        exit 1
+    fi
+
+    for ((i = 0; i < N_CONFIGS; i++)); do
+        if [[ -e "$BACKUP_DIR/${sources[i]}" ]]; then
+            cp "$BACKUP_DIR/${sources[i]}" "${dests[i]}"
+        fi
+    done
+    echo "Done."
+}
+
+update_sources() {
+    echo
+    echo "Updating sources..."
+    for ((i = 0; i < N_CONFIGS; i++)); do
+        parent=$(dirname "${sources[i]}")
+        if [[ ! -e "$parent" ]]; then
+            create_dirs "$parent" > /dev/null
+        fi
+        cp "${dests[i]}" "${sources[i]}"
+    done
+    echo "Done."
+}
+
+delete_backup() {
+    echo "Deleting backup directory..."
+    if [[ -e "$BACKUP_DIR" ]]; then
+        rm -rf "$BACKUP_DIR"
+    else
+        error "No backup directory exists"
+        exit 1
+    fi
+    echo "Done."
+}
+
+validate_all() {
+    read_config_list
+    if [[ "$error_code" == 1 ]]; then
+        exit 1;
+    fi
+    validate_sources
+    validate_dests
+    if [[ "$error_code" == 1 ]]; then
+        exit 1;
+    fi
+}
+
+delete_introduced_files() {
+    if [[ -f "$INTRO_FILE" ]]; then
+        intro_files=( $(cat "$INTRO_FILE" ) )
+        length="${#intro_files[@]}"
+        for ((i = $length - 1; i >= 0; i--)); do
+            file="${intro_files[i]}"
+
+            if [[ -e "$file" ]]; then
+                if [[ -f "$file" ]]; then
+                    rm "$file"
+                elif [[ -d "$file" ]]; then
+                    rmdir "$file"
+                else
+                    error "$file is neither file nor directory"
+                    exit 1
+                fi
+            fi
+        done
+    fi
+}
+
+
+CONFIG_LIST_FILE="configs.txt"
+BACKUP_DIR="$HOME/.cache/config_backup"
+INTRO_FILE="$BACKUP_DIR/.introduced_files.txt"
+created_files=()
+
+[[ "$#" != 1 ]] && usage && exit 1
+
+case $1 in
+    "--apply" | "-a")
+        validate_all
+        backup_dests
+        apply_sources
+        for created_file in "${created_files[@]}"; do
+            echo "$created_file" >> "$BACKUP_DIR/.introduced_files.txt"
+        done
         ;;
-    "--delete")
-        delete_backup=1
+    "--backup" | "-b")
+        validate_all
+        backup_dests
         ;;
-    "--update")
-        update=1
+    "--restore" | "-r")
+        validate_all
+        restore_backup
+        delete_introduced_files
         ;;
-    "--restore")
-        restore=1
+    "--safe-restore" | "-s")
+        validate_all
+        restore_backup
         ;;
-    "--apply")
+    "--update" | "-u")
+        validate_all
+        update_sources
+        ;;
+    "--delete" | "-d")
+        delete_backup
+        ;;
+    "--help" | "-h")
+        usage
+        exit 0
         ;;
     *)
         usage
@@ -62,217 +362,3 @@ case "$1" in
         ;;
 esac
 
-
-if [ -n "$delete_backup" ]; then
-    echo "REMOVING CONFIG BACKUPS"
-    if [ ! -d "$backup_dir" ]; then
-        echo "No backup directory found" > /dev/stderr
-        exit 1
-    fi
-
-    echo "Removing $backup_dir"
-    rm -rf "$backup_dir" || (error && exit 1)
-
-    success
-    exit 0
-fi
-
-
-configs=()
-config_paths=()
-missing_configs=()
-
-add_config() {
-    if [ -e "$1" ]; then
-        missing_configs+=("0")
-    else
-        missing_config=1
-        missing_configs+=("1")
-        echo "./$1 is missing"
-    fi
-    configs+=("$1")
-
-    directory=$(dirname "$2")
-    if [ ! -d "$directory" ]; then
-        if [ -e "$directory" ]; then
-            read -p "$2 exists and is not a directory, delete? y/n " choice
-            if [[ "$choice" != "y" ]]; then
-                echo "Aborted"
-                exit 0
-            fi
-            echo "Removing $directory"
-            rm -rf "$directory" || (error && exit 1)
-        fi
-        echo "Creating directory $directory"
-        mkdir -p "$directory" || (error && exit 1)
-    fi
-
-    config_paths+=("$2")
-}
-
-echo "VALIDATING CONFIGS"
-add_config "vim/vimrc"                   "$HOME/.vim/vimrc"
-add_config "vim/vimpagerrc"              "$HOME/.vim/vimpagerrc"
-add_config "vim/colors/custom.vim"       "$HOME/.vim/colors/custom.vim"
-add_config "vim/autoload/plug.vim"       "$HOME/.vim/autoload/plug.vim"
-add_config "vim/after/syntax/c.vim"      "$HOME/.vim/after/syntax/c.vim"
-add_config "vim/after/syntax/python.vim" "$HOME/.vim/after/syntax/python.vim"
-add_config "vim/after/syntax/java.vim"   "$HOME/.vim/after/syntax/java.vim"
-add_config "vim/after/syntax/sh.vim"     "$HOME/.vim/after/syntax/sh.vim"
-add_config "vim/after/syntax/tmux.vim"   "$HOME/.vim/after/syntax/tmux.vim"
-add_config "vim/after/syntax/vim.vim"    "$HOME/.vim/after/syntax/vim.vim"
-add_config "vim/after/ftplugin/c.vim"    "$HOME/.vim/after/ftplugin/c.vim"
-add_config "tmux.conf"                   "$HOME/.tmux.conf"
-add_config "bashrc"                      "$HOME/.bashrc"
-add_config "inputrc"                     "$HOME/.inputrc"
-add_config "dir_colors"                  "$HOME/.dir_colors"
-[ ! -v missing_config ] && echo "All configs found."
-
-n_configs=${#config_paths[@]}
-
-if [ "$n_configs" -eq 0 ]; then
-    echo "No config files found" > /dev/stderr
-    error
-    exit 1
-fi
-
-
-if [ -n "$update" ]; then
-    echo
-    echo "UPDATING CONFIGS"
-
-    for ((i = 0; i < n_configs; i++)); do
-        config="${configs[i]}"
-        conf_path="${config_paths[i]}"
-        if [ -e "$conf_path" ]; then
-            if [ -e "./$config" ]; then
-                echo "Removing ./$config"
-                rm -rf "./$config" || (error && exit 1)
-            else
-                directory=$(dirname "./$config")
-                if [ ! -d "$directory" ]; then
-                    echo "Creating $directory"
-                    mkdir -p "$directory" || (error && exit 1)
-                fi
-            fi
-            echo "Copying $conf_path to ./$config"
-            cp -r "$conf_path" "./$config" || (error && exit 1)
-        fi
-    done
-
-    success;
-    exit 0
-fi
-
-if [ -n "$restore" ]; then
-    echo
-    echo "RESTORING CONFIG BACKUPS"
-    if [ ! -d "$backup_dir" ]; then
-        echo "No backup directory found" > /dev/stderr
-        error
-        exit 1
-    fi
-
-    for ((i = 0; i < n_configs; i++)); do
-        config="${configs[i]}"
-        conf_path="${config_paths[i]}"
-        conf_backup="$backup_dir/$config"
-
-        if [ -e "$conf_backup" ]; then
-            restored=1
-            if [ -e "$conf_path" ]; then
-                echo "Removing $conf_path"
-                rm -rf "$conf_path" || (error && exit 1)
-            fi
-            echo "Moving $conf_backup to $conf_path"
-            mv "$conf_backup" "$conf_path" || (error && exit 1)
-        fi
-    done
-
-    [ -z "$restored" ] && echo "No config backups found"
-
-    echo "Removing $backup_dir"
-    rm -rf "$backup_dir" || (error && exit 1)
-
-    success
-    exit 0
-fi
-
-if [ -v missing_config ]; then
-    echo
-    read -p "Config(s) are missing, skip them and continue? y/n " choice
-    if [[ "$choice" != "y" ]]; then
-        echo "Aborted"
-        exit 0
-    fi
-fi
-
-echo
-echo "SCANNING EXISTING CONFIGS"
-
-for ((i = 0; i < n_configs; i++)); do
-    config="${configs[i]}"
-    conf_path="${config_paths[i]}"
-    missing_config="${missing_configs[i]}"
-
-    if [[ "$missing_config" == "0" ]]; then
-        if [ -e "$conf_path" ]; then
-            echo "$conf_path exists."
-            error_flag=1
-        fi
-    fi
-done
-if [ -v error_flag ]; then
-    if [ -z "$force" ]; then
-        error
-        exit 1
-    else
-        echo
-        echo "BACKING UP OLD CONFIGS"
-
-        if [ -d "$backup_dir" ]; then
-            read -p "Config backup exists, delete? y/n " choice
-            if [[ "$choice" != "y" ]]; then
-                echo "Aborted"
-                exit 0
-            fi
-            echo "Removing directory $backup_dir"
-            rm -rf "$backup_dir" || (error && exit 1)
-        fi
-
-        for ((i = 0; i < n_configs; i++)); do
-            config="${configs[i]}"
-            conf_path="${config_paths[i]}"
-            missing_config="${missing_configs[i]}"
-
-            if [[ "$missing_config" == "0" ]]; then
-                if [ -e "$conf_path" ]; then
-                    directory=$(dirname "$backup_dir/$config")
-                    if [ ! -d "$directory" ]; then
-                        echo "Creating directory $directory"
-                        mkdir -p "$directory" || (error && exit 1)
-                    fi
-                    echo "Moving $conf_path to $backup_dir/$config"
-                    mv "$conf_path" "$backup_dir/$config" || (error && exit 1)
-                fi
-            fi
-        done
-    fi
-else 
-    echo "No existing config files found"
-fi
-
-echo
-echo "APPLYING CONFIGS"
-
-for ((i = 0; i < n_configs; i++)); do
-    config="${configs[i]}"
-    conf_path="${config_paths[i]}"
-    missing_config="${missing_configs[i]}"
-    if [[ "$missing_config" == "0" ]]; then
-        echo "Copying ./$config to $conf_path"
-        cp -r "./$config" "$conf_path" || (error && exit 1)
-    fi
-done
-
-success

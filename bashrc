@@ -136,3 +136,5 @@ if command -v tmux &> /dev/null \
 then
     exec $(tmux a 2>/dev/null || tmux)
 fi
+
+#test

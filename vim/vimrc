@@ -171,3 +171,12 @@ nnoremap Q @q
 
 " map <c-k>zs to zero-width space
 exe 'digraph zs ' . 0x200b
+
+
+" FUNCTIONS
+function! SynStack()
+    if !exists("*synstack")
+        return
+    endif
+    echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunction

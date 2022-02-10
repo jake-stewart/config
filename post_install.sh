@@ -1,5 +1,7 @@
+# this file executes once the configs are applied
+# this is useful for chmod +x on scripts for example
 
-# tmux statusline needs executable permissions
+
 if [ -f "$HOME/.config/tmux/statusline.sh" ]; then
     chmod +x "$HOME/.config/tmux/statusline.sh"
 fi

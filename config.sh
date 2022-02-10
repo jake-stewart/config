@@ -262,11 +262,15 @@ update_sources() {
     echo
     echo "Updating sources..."
     for ((i = 0; i < N_CONFIGS; i++)); do
-        parent=$(dirname "${sources[i]}")
-        if [[ ! -e "$parent" ]]; then
-            create_dirs "$parent" > /dev/null
+        if [[ -e "${dests[i]}" ]]; then
+            parent=$(dirname "${sources[i]}")
+            if [[ ! -e "$parent" ]]; then
+                create_dirs "$parent" > /dev/null
+            fi
+            cp "${dests[i]}" "${sources[i]}"
+        else
+            echo "${dests[i]} does not exist, skipped."
         fi
-        cp "${dests[i]}" "${sources[i]}"
     done
     echo "Done."
 }
@@ -346,7 +350,10 @@ case $1 in
         restore_backup
         ;;
     "--update" | "-u")
-        validate_all
+        read_config_list
+        if [[ "$error_code" == 1 ]]; then
+            exit 1;
+        fi
         update_sources
         ;;
     "--delete" | "-d")

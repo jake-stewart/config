@@ -1,22 +1,22 @@
 # vim
-vim/vimrc                   $HOME/.vim/vimrc
-vim/vimpagerrc              $HOME/.vim/vimpagerrc
-vim/autoload/plug.vim       $HOME/.vim/autoload/plug.vim
-vim/after/ftplugin/c.vim    $HOME/.vim/after/ftplugin/c.vim
-vim/after/syntax/c.vim      $HOME/.vim/after/syntax/c.vim
-vim/after/syntax/java.vim   $HOME/.vim/after/syntax/java.vim
-vim/after/syntax/python.vim $HOME/.vim/after/syntax/python.vim
-vim/after/syntax/sh.vim     $HOME/.vim/after/syntax/sh.vim
-vim/after/syntax/tmux.vim   $HOME/.vim/after/syntax/tmux.vim
-vim/after/syntax/vim.vim    $HOME/.vim/after/syntax/vim.vim
+config_files/vim/vimrc                   $HOME/.vim/vimrc
+config_files/vim/vimpagerrc              $HOME/.vim/vimpagerrc
+config_files/vim/autoload/plug.vim       $HOME/.vim/autoload/plug.vim
+config_files/vim/after/ftplugin/c.vim    $HOME/.vim/after/ftplugin/c.vim
+config_files/vim/after/syntax/c.vim      $HOME/.vim/after/syntax/c.vim
+config_files/vim/after/syntax/java.vim   $HOME/.vim/after/syntax/java.vim
+config_files/vim/after/syntax/python.vim $HOME/.vim/after/syntax/python.vim
+config_files/vim/after/syntax/sh.vim     $HOME/.vim/after/syntax/sh.vim
+config_files/vim/after/syntax/tmux.vim   $HOME/.vim/after/syntax/tmux.vim
+config_files/vim/after/syntax/vim.vim    $HOME/.vim/after/syntax/vim.vim
 
 # tmux
-tmux/tmux.conf              $HOME/.tmux.conf
-tmux/statusline.sh          $HOME/.config/tmux/statusline.sh
+config_files/tmux/tmux.conf              $HOME/.tmux.conf
+config_files/tmux/statusline.sh          $HOME/.config/tmux/statusline.sh
 
 # home
-bashrc                      $HOME/.bashrc
-zshrc                       $HOME/.zshrc
-inputrc                     $HOME/.inputrc
-dir_colors                  $HOME/.dir_colors
+config_files/bashrc                      $HOME/.bashrc
+config_files/zshrc                       $HOME/.zshrc
+config_files/inputrc                     $HOME/.inputrc
+config_files/dir_colors                  $HOME/.dir_colors
 

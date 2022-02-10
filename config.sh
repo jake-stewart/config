@@ -299,6 +299,7 @@ validate_all() {
 }
 
 delete_introduced_files() {
+    echo "Deleting introduced files..."
     if [[ -f "$INTRO_FILE" ]]; then
         intro_files=( $(cat "$INTRO_FILE" ) )
         length="${#intro_files[@]}"
@@ -319,6 +320,13 @@ delete_introduced_files() {
     fi
 }
 
+post_install() {
+    echo
+    echo "Running post installation script..."
+    source "./post_install.sh"
+    echo "Done."
+}
+
 
 CONFIG_LIST_FILE="configs.txt"
 BACKUP_DIR="$HOME/.cache/config_backup"
@@ -335,6 +343,7 @@ case $1 in
         for created_file in "${created_files[@]}"; do
             echo "$created_file" >> "$BACKUP_DIR/.introduced_files.txt"
         done
+        post_install
         ;;
     "--backup" | "-b")
         validate_all

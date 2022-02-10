@@ -2,10 +2,6 @@
 
 set -e
 
-# validate that the sources found in config list file can be found
-# this step may be skipped, for example when updating the sources.
-VALIDATE_SOURCE_EXISTS=1
-
 usage() {
     echo "Usage: $0 [OPTION]"
     echo
@@ -52,9 +48,7 @@ read_config_list() {
         dests[$i]=$(eval echo "${dests[i]}")
     done
 
-    if [[ "$error_flag" == 0 ]]; then
-        echo "No errors found."
-    fi
+    [[ "$error_flag" == 0 ]] && echo "No errors found."
 }
 
 validate_sources() {
@@ -71,10 +65,7 @@ validate_sources() {
                 break
             fi
         done
-
-        if [[ "$is_dupe" == 1 ]]; then
-            continue
-        fi
+        [[ "$is_dupe" == 1 ]] && continue
 
         is_duped=0
         for ((j = i+1; j < N_CONFIGS; j++)); do
@@ -91,18 +82,14 @@ validate_sources() {
         if [[ ! "$src" =~ ^(\/?[a-zA-Z0-9_.-])+$ ]]; then
             error "$src is not a valid path"
         elif [[ ! -e "$src" ]]; then
-            if [[ "$VALIDATE_SOURCE_EXISTS" == 1 ]]; then
-                error "$src does not exist"
-            fi
+            error "$src does not exist"
         elif [[ ! -f "$src" ]]; then
             error "$src is not a file"
         fi
         validated+=("$src")
     done
 
-    if [[ "$error_flag" == 0 ]]; then
-        echo "No errors found."
-    fi
+    [[ "$error_flag" == 0 ]] && echo "No errors found."
 }
 
 validate_dests() {
@@ -119,10 +106,7 @@ validate_dests() {
                 break
             fi
         done
-
-        if [[ "$is_dupe" == 1 ]]; then
-            continue
-        fi
+        [[ "$is_dupe" == 1 ]] && continue
 
         is_duped=0
         for ((j = i+1; j < N_CONFIGS; j++)); do
@@ -168,9 +152,7 @@ validate_dests() {
         validated+=("$dest")
     done
 
-    if [[ "$error_flag" == 0 ]]; then
-        echo "No errors found."
-    fi
+    [[ "$error_flag" == 0 ]] && echo "No errors found."
 }
 
 
@@ -300,24 +282,16 @@ delete_backup() {
     echo "Done."
 }
 
-validate() {
+validate_all() {
     read_config_list
-    if [[ "$error_flag" == 1 ]]; then
-        exit 1
+    if [[ "$error_code" == 1 ]]; then
+        exit 1;
     fi
-
-    for var in "$@"
-    do
-        case "$var" in
-            sources) validate_sources;;
-            dests)   validate_dests;;
-            *)       error "$var: bad target to validate";;
-        esac
-
-        if [[ "$error_flag" == 1 ]]; then
-            exit 1
-        fi
-    done
+    validate_sources
+    validate_dests
+    if [[ "$error_code" == 1 ]]; then
+        exit 1;
+    fi
 }
 
 delete_introduced_files() {
@@ -347,14 +321,11 @@ BACKUP_DIR="$HOME/.cache/config_backup"
 INTRO_FILE="$BACKUP_DIR/.introduced_files.txt"
 created_files=()
 
-if [[ "$#" != 1 ]]; then
-    usage
-    exit 1
-fi
+[[ "$#" != 1 ]] && usage && exit 1
 
 case $1 in
     "--apply" | "-a")
-        validate sources dests
+        validate_all
         backup_dests
         apply_sources
         for created_file in "${created_files[@]}"; do
@@ -362,21 +333,20 @@ case $1 in
         done
         ;;
     "--backup" | "-b")
-        validate sources dests
+        validate_all
         backup_dests
         ;;
     "--restore" | "-r")
-        validate sources dests
+        validate_all
         restore_backup
         delete_introduced_files
         ;;
     "--safe-restore" | "-s")
-        validate sources dests
+        validate_all
         restore_backup
         ;;
     "--update" | "-u")
-        VALIDATE_SOURCE_EXISTS=0
-        validate sources dests
+        validate_all
         update_sources
         ;;
     "--delete" | "-d")

@@ -11,12 +11,11 @@ vim/after/syntax/tmux.vim   $HOME/.vim/after/syntax/tmux.vim
 vim/after/syntax/vim.vim    $HOME/.vim/after/syntax/vim.vim
 
 # tmux
-tmux/tmux.conf              $HOME/.tmux.conf
+tmux/tmux.conf              $HOME/.config/tmux/tmux.conf
 tmux/statusline.sh          $HOME/.config/tmux/statusline.sh
 
 # home
 bashrc                      $HOME/.bashrc
-zshrc                       $HOME/.zshrc
 inputrc                     $HOME/.inputrc
 dir_colors                  $HOME/.dir_colors
 

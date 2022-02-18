@@ -2,8 +2,18 @@
 KEYTIMEOUT=1
 bindkey -v
 
-# prompt (aesthetic)
-PROMPT="%d $ "
+export EDITOR=vim
+export PAGER=vimpager
+
+case `uname` in
+    Darwin)
+        setopt PROMPT_SUBST
+        PROMPT='%40<...<$(pwd | awk '"'"'{print tolower($0)}'"'"')%<< $ '
+        ;;
+    Linux | FreeBSD)
+        PROMPT="%d $ "
+        ;;
+esac
 
 show_title() {
     print -Pn "\e]2;zsh (%~)\a"

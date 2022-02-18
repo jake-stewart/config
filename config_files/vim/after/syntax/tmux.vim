@@ -1,12 +1,17 @@
-function! g:CreateCommentHeadings(comment_char, comment_syn)
-   exe 'syn match CommentHeading ' 
-               \ . '/\v' . a:comment_char . '\s*\zs([A-Z]{2,}|(([A-Z]+['."'".'"!():+?-]?|['."'".'"!():+?-]?[A-Z]+)\s*){2,})$/'
-               \ . ' contained containedin=' . a:comment_syn
-   if exists("g:CommentHeading")
-       exe 'hi CommentHeading ' . g:CommentHeading
+function! CreateCommentHeadings(c)
+    exe 'syn match CommentBlock ' .
+        \ '/\v((\n|%^)\s*'.a:c.'\s*)+\n\s*'.a:c.'.*\ze\n(^\s*'.a:c.'.*\n)*^\s*'.a:c.'\s*(\n\n|%$)/'
+
+    exe 'syn match CommentHeading ' .
+        \ '/^'.a:c.'\s*\zs.*\ze$/ contained containedin=CommentBlock'
+
+    hi link CommentBlock Comment
+
+    if exists("g:CommentHeading")
+        exe 'hi CommentHeading ' . g:CommentHeading
     else
-       hi CommentHeading gui=underline cterm=underline
-   endif
+        hi CommentHeading gui=bold cterm=bold
+    endif
 endfunction
 
-call CreateCommentHeadings('#', 'TmuxComment')
+call CreateCommentHeadings('#')

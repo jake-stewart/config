@@ -1,4 +1,8 @@
+let g:use_coc = 1
+
+"
 " COMPATIBILITY
+"
 
 set nocompatible
 
@@ -42,7 +46,9 @@ function! TmuxQuit()
 endfunction
 
 
+"
 " APPEARANCE
+"
 
 
 
@@ -67,7 +73,9 @@ hi Comment gui=italic cterm=italic
 hi Todo gui=italic cterm=italic
 
 
+"
 " SETTINGS
+"
 
 set noswapfile
 
@@ -102,7 +110,9 @@ set mouse=a                         " enable mouse
 set ttimeoutlen=1                   " time waited for terminal codes
 
 
+"
 " PLUGINS
+"
 
 let g:polyglot_disabled = ['autoindent', 'sensible', 'ftdetect']
 
@@ -120,7 +130,7 @@ Plug 'wellle/targets.vim'
 Plug 'machakann/vim-sandwich'
 Plug 'junegunn/vim-easy-align'
 
-if 0
+if g:use_coc
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
     nmap <silent> gd <Plug>(coc-definition)
     nmap <silent> gy <Plug>(coc-type-definition)
@@ -151,7 +161,9 @@ set signcolumn=number
 
 
 
+"
 " OTHER PLUGIN SETTINGS
+"
 
 " vim-easy-align
 xmap ga <Plug>(EasyAlign)
@@ -179,7 +191,9 @@ autocmd FileType * setlocal fo-=c fo-=r fo-=o  " remove autocommenting
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
 
 
+"
 " MAPPINGS
+"
 
 
 let mapleader = "t"

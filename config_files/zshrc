@@ -45,6 +45,11 @@ cdls() {
     ls --color=auto
 }
 
+# `time` command format
+[ `uname` = Darwin ] && MAX_MEMORY_UNITS=KB || MAX_MEMORY_UNITS=MB
+TIMEFMT='%J took %U user (%*Es total), using %P cpu'\
+' and %M '$MAX_MEMORY_UNITS' of memory'$'\n'
+
 # aliases
 alias ls="ls --color=auto"
 # alias cd="cdls"

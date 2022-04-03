@@ -107,7 +107,13 @@ if status is-interactive
                 echo
                 commandline -f execute
             else
-                set condensed (__condense_commandline)
+
+                # the two spaces "fixes" fish bug where autosuggestion
+                # sticks around.
+                # since trailing spaces are deleted, there will never
+                # be a past command to autocomplete from
+                set condensed (__condense_commandline)"  "
+
                 commandline $condensed
                 if [ $condensed = "" ]
                     printf "\n\n"

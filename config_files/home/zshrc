@@ -7,9 +7,17 @@ source "$HOME/.config/zsh/zsh-system-clipboard/zsh-system-clipboard.zsh"
 export EDITOR=vim
 export PAGER=vimpager
 
+# add ~/.bin to path
+[[ -d $HOME/.bin ]] && \
+    export PATH="$HOME/.bin:$PATH"
+
+[[ -d $HOME/.cargo/bin ]] && \
+    export PATH="$HOME/.cargo/bin:$PATH"
+
 case `uname` in
     Darwin)
         setopt PROMPT_SUBST
+        # jesus fuck
         PROMPT='%40<...<$( [[ $(pwd) == "/" ]] && echo "/" || echo $(pwd | awk -F/ '"'"'{print tolower($NF)}'"'"'))%<< $ '
         ;;
     Linux | FreeBSD)
@@ -35,47 +43,21 @@ skip_precmd() {
 }
 skip_precmd
 
-# if [[ $TMUX ]]; then
-#     alias clear='skip_precmd; clear; tmux clear-history'
-# else
-#     alias clear="skip_precmd; clear"
-# fi
 alias clear="skip_precmd; clear"
-
 
 export HISTSIZE=1000000000
 export SAVEHIST=$HISTSIZE
 # setopt EXTENDED_HISTORY
 
 # case insensitive completion
-
 # autoload -Uz compinit && compinit
 # setopt MENU_COMPLETE
 setopt nocaseglob
 setopt no_list_ambiguous
 setopt complete_in_word
-# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*' _complete
 autoload -Uz compinit && compinit
-# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*' _complete
-
-
-
-# zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+l:|=* r:|=*'
-
-zstyle ':completion:*' completer _complete
-# zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Za-z}' '+l:|=* r:|=*'
-
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Za-z}' 'l:|{a-z}=*'
-autoload -Uz compinit
-compinit
 
-
-# add ~/.bin to path
-[[ -d $HOME/.bin ]] && \
-    export PATH="$HOME/.bin:$PATH"
-
-[[ -d $HOME/.cargo/bin ]] && \
-    export PATH="$HOME/.cargo/bin:$PATH"
 
 cdls() {
     test -z "$1" && cd || cd "$1"
@@ -123,15 +105,6 @@ fcd() {
     fi
 }
 
-#function expand-alias() {
-#	zle _expand_alias
-#	zle self-insert
-#}
-#zle -N expand-alias
-#bindkey -M main ' ' expand-alias
-
-# exec $(tmux a 2>/dev/null || tmux)
-
 function ranger {
 	local IFS=$'\t\n'
 	local tempfile="$(mktemp -t tmp.XXXXXX)"
@@ -152,7 +125,6 @@ function ranger {
 bindkey -s '' 'fcd'
 
 alias jmatrix="jmatrix --bg #1b1b20 --trail 12"
-# alias jmatrix="jmatrix --trail 12"
 
 lfcd () {
     tmp="$(mktemp)"

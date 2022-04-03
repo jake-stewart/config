@@ -202,10 +202,32 @@ if status is-interactive
     end
     bind -M insert ! __bind_bang
 
+    # use ls and switch to the directory after
+    function lf
+        set tmp (mktemp)
+        command lf -last-dir-path=$tmp $argv
+
+        if [ -f $tmp ]
+            set dir (cat $tmp)
+            rm -f $tmp >/dev/null
+            [ -d $dir ] && [ $dir != (pwd) ] && cd $dir
+        end
+    end
+
+    function mvcd
+        mv $argv && cd $argv[-1]
+    end
+
+    function mkcd
+        mkdir $argv[1] && cd $argv[1]
+    end
+
+    function jmatrix
+        command jmatrix --bg "#1b1b20" --trail 12 $argv
+    end
 
     # using /bin/ls since fish has its own ls which adds too much noise
-    alias ls='/bin/ls --color=auto'
-
+    alias ls="/bin/ls --color=auto"
 
     fish_vi_key_bindings
     set fish_cursor_default     block      blink

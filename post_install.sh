@@ -1,11 +1,12 @@
 # this file executes once the configs are applied
 # this is useful for chmod +x on scripts for example
 
+FILES_NEED_EXECUTABLE="\
+$HOME/.config/tmux/statusline.sh
+$HOME/.config/fish/smart_join.py"
 
-if [ -f "$HOME/.config/tmux/statusline.sh" ]; then
-    chmod +x "$HOME/.config/tmux/statusline.sh"
-fi
-
-if [ -f "$HOME/.config/fish/smart_join.py" ]; then
-    chmod +x "$HOME/.config/fish/smart_join.py"
-fi
+for file in $FILES_NEED_EXECUTABLE; do
+    if [ -f "$file" ]; then
+        chmod +x "$file"
+    fi
+done

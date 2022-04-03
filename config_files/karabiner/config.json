@@ -236,25 +236,6 @@
                 {
                     "type": "basic",
                     "from": {
-                        "key_code": "l",
-                        "modifiers": {
-                            "mandatory": [
-                                "left_command"
-                            ]
-                        }
-                    },
-                    "to": [
-                        {
-                            "key_code": "l",
-                            "modifiers": [
-                                "option"
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "basic",
-                    "from": {
                         "key_code": "h",
                         "modifiers": {
                             "mandatory": [
@@ -266,27 +247,6 @@
                     "to": [
                         {
                             "key_code": "h",
-                            "modifiers": [
-                                "option",
-                                "shift"
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "basic",
-                    "from": {
-                        "key_code": "l",
-                        "modifiers": {
-                            "mandatory": [
-                                "left_command",
-                                "shift"
-                            ]
-                        }
-                    },
-                    "to": [
-                        {
-                            "key_code": "l",
                             "modifiers": [
                                 "option",
                                 "shift"

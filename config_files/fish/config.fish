@@ -146,8 +146,7 @@ if status is-interactive
 
     # newline after command except clear
     function __postexec_impl --on-event fish_postexec
-        # set -e PATH[6..-1]
-        if [ "$argv[1]" != "clear" ]
+        if [ (string trim $argv[1]) != clear ]
             echo
         end
     end

@@ -1,0 +1,175 @@
+# vi emulation
+KEYTIMEOUT=1
+bindkey -v
+
+source "$HOME/.config/zsh/zsh-system-clipboard/zsh-system-clipboard.zsh"
+
+export EDITOR=vim
+export PAGER=vimpager
+
+case `uname` in
+    Darwin)
+        setopt PROMPT_SUBST
+        PROMPT='%40<...<$( [[ $(pwd) == "/" ]] && echo "/" || echo $(pwd | awk -F/ '"'"'{print tolower($NF)}'"'"'))%<< $ '
+        ;;
+    Linux | FreeBSD)
+        PROMPT="%d $ "
+        ;;
+esac
+
+show_title() {
+    cwd=$(pwd | awk -F/ '{print tolower($NF)}')
+    [[ "$cwd" == "" ]] && cwd="/"
+    print -Pn "\e]2;$cwd\a"
+}
+
+# show newline after every command except first & clear
+skip_precmd() {
+    precmd () {
+        show_title
+        precmd() {
+            echo
+            show_title
+        }
+    }
+}
+skip_precmd
+
+# if [[ $TMUX ]]; then
+#     alias clear='skip_precmd; clear; tmux clear-history'
+# else
+#     alias clear="skip_precmd; clear"
+# fi
+alias clear="skip_precmd; clear"
+
+
+export HISTSIZE=1000000000
+export SAVEHIST=$HISTSIZE
+# setopt EXTENDED_HISTORY
+
+# case insensitive completion
+
+# autoload -Uz compinit && compinit
+# setopt MENU_COMPLETE
+setopt nocaseglob
+setopt no_list_ambiguous
+setopt complete_in_word
+# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*' _complete
+autoload -Uz compinit && compinit
+# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*' _complete
+
+
+
+# zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+l:|=* r:|=*'
+
+zstyle ':completion:*' completer _complete
+# zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Za-z}' '+l:|=* r:|=*'
+
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Za-z}' 'l:|{a-z}=*'
+autoload -Uz compinit
+compinit
+
+
+# add ~/.bin to path
+[[ -d $HOME/.bin ]] && \
+    export PATH="$HOME/.bin:$PATH"
+
+[[ -d $HOME/.cargo/bin ]] && \
+    export PATH="$HOME/.cargo/bin:$PATH"
+
+cdls() {
+    test -z "$1" && cd || cd "$1"
+    ls --color=auto
+}
+mkcd() {
+    mkdir "$1" && cd "$1"
+}
+
+# `time` command format
+[ `uname` = Darwin ] && MAX_MEMORY_UNITS=KB || MAX_MEMORY_UNITS=MB
+# TIMEFMT='%J took %U user (%*Es total), using %P cpu'\
+# ' and %M '$MAX_MEMORY_UNITS' of memory'$'\n'
+TIMEFMT=$'\n''%J  %U user %*Es total %P cpu %M '$MAX_MEMORY_UNITS' mem'
+
+# aliases
+alias ls="ls --color=auto"
+# alias cd="cdls"
+
+eval "$(fnm env --use-on-cd)"
+
+alias     ..="cd .."
+alias    ...="cd ../.."
+alias   ....="cd ../../.."
+alias  .....="cd ../../../.."
+alias ......="cd ../../../../.."
+
+fcd() {
+    out="$HOME/.cache/fcd_dest_this_file_will_be_deleted"
+    echo "" > "$out"
+    ~/.bin/fcd ~/.config/fcd/directories.txt "$out"
+    if [ -e "$out" ]; then
+        file=$(cat "$out")
+
+        file=${file//\~/$HOME}
+        file=${file//\$HOME/$HOME}
+
+        if [ -e "$file" ]; then
+            if [ -d "$file" ]; then
+                cd "$file"; ls
+            else
+                vim "$file"
+            fi
+        fi
+    fi
+}
+
+#function expand-alias() {
+#	zle _expand_alias
+#	zle self-insert
+#}
+#zle -N expand-alias
+#bindkey -M main ' ' expand-alias
+
+# exec $(tmux a 2>/dev/null || tmux)
+
+function ranger {
+	local IFS=$'\t\n'
+	local tempfile="$(mktemp -t tmp.XXXXXX)"
+	local ranger_cmd=(
+		command
+		ranger
+		--cmd="map q chain shell echo %d > "$tempfile"; quitall"
+	)
+	
+	${ranger_cmd[@]} "$@"
+	if [[ -f "$tempfile" ]] && [[ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]]; then
+		cd -- "$(cat "$tempfile")" || return
+	fi
+	command rm -f -- "$tempfile" 2>/dev/null
+}
+
+
+bindkey -s '' 'fcd'
+
+alias jmatrix="jmatrix --bg #1b1b20 --trail 12"
+# alias jmatrix="jmatrix --trail 12"
+
+lfcd () {
+    tmp="$(mktemp)"
+    lf -last-dir-path="$tmp" "$@"
+    if [ -f "$tmp" ]; then
+        dir="$(cat "$tmp")"
+        rm -f "$tmp" >/dev/null
+        [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+    fi
+}
+alias lf=lfcd
+
+cdls() {
+    cd $1 && ls
+}
+alias cd=cdls
+
+mvcd() {
+    mv $@ && cdls "$@[-1]"
+}

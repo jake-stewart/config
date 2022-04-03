@@ -1,124 +1,30 @@
 let g:use_coc = 1
 
-"
-" COMPATIBILITY
-"
+let mapleader = "t"
 
-set nocompatible
+" BOX DRAWING CHARS {{{
+" ┌─────────┬───────┐
+" │ digraph │ char  │
+" ├─────────┼───────┤
+" │ dr      │ ┏     │
+" │ dl      │     ┓ │
+" │ ur      │ ┗     │
+" │ ul      │     ┛ │
+" │ dh      │ ┳     │
+" │ uh      │     ┻ │
+" │ lv      │ ┫     │
+" │ rv      │     ┣ │
+" │ hv      │ ╋     │
+" │ hh      │     ━ │
+" │ vv      │ ┃     │
+" └─────────┴───────┘
+" }}}
 
-if has("mouse_sgr")
-    set ttymouse=sgr
-else
-    set ttymouse=xterm2
-end
-
-" if &term == "xterm-256color"
-"     let &t_SI = "\<Esc>[5 q"
-"     let &t_EI = "\<Esc>[1 q"
-"     let &t_SR = "\<Esc>[4 q"
-"     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-"     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-"     let &t_Cs = "\e[4:3m"
-"     let &t_Ce = "\e[4:0m"
-" endif
-
-" tmux
-let g:tmux_navigator_no_mappings = 1
-nnoremap <silent> <c-w>h :TmuxNavigateLeft<cr>
-nnoremap <silent> <c-w>j :TmuxNavigateDown<cr>
-nnoremap <silent> <c-w>k :TmuxNavigateUp<cr>
-nnoremap <silent> <c-w>l :TmuxNavigateRight<cr>
-
-command! TmuxQuit call TmuxQuit()
-nnoremap <silent> <c-w>q :TmuxQuit<CR>
-
-
-function! TmuxQuit()
-    if &modified
-        echo "Error: Buffer is modified"
-        return
-    endif
-    if win_getid(2) == 0
-        !tmux killp
-    else
-        quit
-    endif
-endfunction
-
-
-"
-" APPEARANCE
-"
-
-
-
-set title
-set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:~:h\")})%)%(\ %a%)
-set background=dark
-set termguicolors
-syntax on
-colorscheme custom
-
-set shortmess+=I   " remove start page
-set guioptions=c!  " remove gvim widgets
-set noshowmode     " hide --INSERT--
-set laststatus=0   " hide statusbar
-set ruler
-set number
-set cursorline
-set belloff=all    " disable sound
-set showcmd
-
-hi Comment gui=italic cterm=italic
-hi Todo gui=italic cterm=italic
-
-
-"
-" SETTINGS
-"
-
-set noswapfile
-
-" splits
-set splitright
-set splitbelow
-
-" whitespace
-set tabstop=8
-set softtabstop=0
-set expandtab
-set shiftwidth=4
-set smarttab
-
-" persistant undo
-exe "set undodir=" . fnamemodify($MYVIMRC, ":h") . "/undodir"
-set undofile
-
-" searching
-set hlsearch
-set incsearch
-set smartcase
-set ignorecase
-
-" other
-set lazyredraw                      " run macros without updating screen
-set clipboard^=unnamed,unnamedplus  " make vim use system clipboard
-set encoding=utf-8                  " unicode characters
-set hidden                          " allow buffer switching without saving
-set backspace=indent,eol,start      " make backspace work as expected
-set mouse=a                         " enable mouse
-set ttimeoutlen=1                   " time waited for terminal codes
-
-
-"
-" PLUGINS
-"
+" PLUGINS {{{
 
 let g:polyglot_disabled = ['autoindent', 'sensible', 'ftdetect']
 
-" vimplug
 call plug#begin("~/.vim/plugged")
-Plug 'christoomey/vim-tmux-navigator'
 Plug 'machakann/vim-swap'
 Plug 'glts/vim-textobj-comment'
 Plug 'tpope/vim-commentary'
@@ -129,6 +35,12 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'wellle/targets.vim'
 Plug 'machakann/vim-sandwich'
 Plug 'junegunn/vim-easy-align'
+Plug 'rakr/vim-one'
+" Plug 'powerman/vim-plugin-AnsiEsc'
+" Plug 'yuratomo/w3m.vim'
+" Plug 'uiiaoo/java-syntax.vim'
+" highlight link javaIdentifier NONE
+" highlight link javaDelimiter NONE
 
 if g:use_coc
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -152,18 +64,22 @@ if g:use_coc
     endfunction
 end
 
+Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-nnoremap <c-k> :FZF<cr>
+" ignore .gitignore shit
+" let $FZF_DEFAULT_COMMAND = 'ag -g ""'
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
+nnoremap <leader>b :Buffers<cr>
+nnoremap <leader>e :FZF<cr>
 
 call plug#end()
+" call glaive#Install()
 
 set signcolumn=number
 
+" }}}
 
-
-"
-" OTHER PLUGIN SETTINGS
-"
+" OTHER PLUGIN SETTINGS {{{
 
 " vim-easy-align
 xmap ga <Plug>(EasyAlign)
@@ -180,8 +96,120 @@ nmap cia cIa
 nmap dia dIa
 nmap yia yIa
 
+" }}}
 
-" AUTOCOMMANDS
+" COMPATIBILITY {{{
+
+set nocompatible
+
+if has("mouse_sgr")
+    set ttymouse=sgr
+else
+    set ttymouse=xterm2
+end
+
+if &term =~ '^xterm.\(256color\|kitty\)'
+    let &t_SI = "\<Esc>[5 q"
+    let &t_EI = "\<Esc>[1 q"
+    let &t_SR = "\<Esc>[4 q"
+    " let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    " let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    " let &t_Cs = "\e[4:3m"
+    " let &t_Ce = "\e[4:0m"
+endif
+
+" }}}
+
+" APPEARANCE {{{
+
+set title
+" set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:~:h\")})%)%(\ %a%)
+" set titlestring=vim\ -\ %t%(\ %M%)%(\ %a%)
+set titlestring=%t%(\ %M%)%(\ %a%)
+set foldmethod=marker
+
+" set scrolloff=5
+
+set background=dark
+set termguicolors
+syntax on
+colorscheme custom
+
+" set background=light
+" set termguicolors
+" syntax on
+" colorscheme one
+
+
+
+set shortmess+=I   " remove start page
+set showmatch
+set guioptions=c!  " remove gvim widgets
+set noshowmode     " hide --INSERT--
+set laststatus=0   " hide statusbar
+set ruler
+set number
+set cursorline
+set belloff=all    " disable sound
+" set showcmd
+set showmatch
+
+hi Comment gui=italic cterm=italic
+hi Todo gui=italic cterm=italic
+
+" }}}
+
+" SETTINGS {{{
+
+set noswapfile
+
+" splits
+set splitright
+set splitbelow
+
+" whitespace
+set tabstop=8
+set expandtab
+set softtabstop=4
+set shiftwidth=4
+set smarttab
+
+if !isdirectory($HOME."/.vim")
+    call mkdir($HOME."/.vim", "", 0770)
+endif
+if !isdirectory($HOME."/.vim/undodir")
+    call mkdir($HOME."/.vim/undodir", "", 0700)
+endif
+set undodir=~/.vim/undodir
+set undofile
+set undolevels=5000
+
+" searching
+set hlsearch
+set incsearch
+set smartcase
+set ignorecase
+
+" other
+set lazyredraw                      " run macros without updating screen
+set clipboard^=unnamed,unnamedplus  " make vim use system clipboard
+set encoding=utf-8                  " unicode characters
+set hidden                          " allow buffer switching without saving
+set backspace=indent,eol,start      " make backspace work as expected
+set mouse=a                         " enable mouse
+set ttimeoutlen=1                   " time waited for terminal codes
+
+" set linebreak
+" set breakindent
+" set breakindentopt=shift:8
+" set cursorlineopt=screenline
+
+" map j gj
+" map k gk
+
+" }}}
+
+" AUTOCOMMANDS {{{
 
 autocmd BufNewFile,BufRead *.jn setf jnote
 autocmd BufNewFile,BufRead *.tbl setf tablescript
@@ -190,13 +218,44 @@ autocmd FileType * setlocal fo-=c fo-=r fo-=o  " remove autocommenting
 " go to last position before exiting vim
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
 
+" }}}
 
-"
-" MAPPINGS
-"
+" MAPPINGS {{{
+
+function! GoStartParagraph()
+    call cursor(0, 1)
+    let l:start_line = line('.')
+    let l:line = search("\\v(^\\s*\\n|%^)\\zs\\s*\\S+.*$", "Wb")
+    let l:diff = l:start_line - l:line
+    if l:diff > 0
+        return l:diff . 'k^'
+    endif
+    return ""
+endfunction
+
+function! GoEndParagraph()
+    let l:start_line = line('.')
+    let l:line = search("\\v\\s*\\S+.*\\ze(\\n\\s*$|%$)", "W")
+    let l:diff = l:line - l:start_line
+    if l:diff > 0
+        return l:diff . 'j^'
+    endif
+    return ""
+endfunction
 
 
-let mapleader = "t"
+" } and {
+vnoremap <silent><expr><cr> GoEndParagraph()
+vnoremap <silent><expr>   GoStartParagraph()
+nnoremap <silent><expr><cr> GoEndParagraph()
+nnoremap <silent><expr>   GoStartParagraph()
+onoremap <silent><expr><cr> GoEndParagraph()
+onoremap <silent><expr>   GoStartParagraph()
+
+
+
+nnoremap <c-l> :bn<cr>
+nnoremap <backspace> :bp<cr>
 
 nnoremap <expr><leader>j Slide(1, 0)
 vnoremap <expr><leader>j Slide(1, 0)
@@ -211,6 +270,9 @@ vnoremap <expr><leader>K Slide(-1, 1)
 " remove search highlighting
 nnoremap <silent><space> :noh<CR>
 
+nnoremap <c-d> zt<c-d>M
+nnoremap <c-u> zb<c-u>M
+
 " toggle cursor column 
 nnoremap <silent><leader>c :exec &cuc ? "set nocuc" : "set cuc"<CR>
 
@@ -220,11 +282,28 @@ nnoremap Y y$
 " Replace Ex mode with run q macro
 nnoremap Q @q
 
+function SmartQuit()
+    try
+        quit
+    catch
+        try
+            wq
+        catch
+            write! ~/.cache/vim-force-quit-backup
+            quit!
+        endtry
+    endtry
+endfunction
+
+nnoremap <leader>q :call SmartQuit()<CR> 
+
 " map <c-k>zs to zero-width space
 exe 'digraph zs ' . 0x200b
 
+" }}}
 
-" FUNCTIONS
+" FUNCTIONS {{{
+
 function! SynStack()
     if !exists("*synstack")
         return
@@ -328,3 +407,65 @@ function! Slide(direction, smart_syntax)
         return l:jump . l:jump_char
     endif
 endfunction
+
+let java_highlight_all="1"
+
+" }}}
+
+
+
+" {{{ TABLINE
+
+function MyTabLabel(n)
+    let buflist = tabpagebuflist(a:n)
+    let winnr = tabpagewinnr(a:n)
+    let l:name = bufname(buflist[winnr - 1])
+    if l:name == ""
+        let l:name = "[No Name]"
+    else
+
+        let l:words = split(l:name, '/')
+        if len(l:words) == 1
+            let l:name = "/" . words[0]
+        else
+            let l:name = words[-2] . "/" . words[-1]
+        endif
+    endif
+
+    if getbufvar(buflist[winnr - 1], "&modified")
+        let l:name .= " +"
+    endif
+    return l:name
+endfunction
+
+function MyTabLine()
+    let s = ''
+    for i in range(tabpagenr('$'))
+        " select the highlighting
+        if i + 1 == tabpagenr()
+            let s ..= '%#TabLineSel#'
+        else
+            let s ..= '%#TabLine#'
+        endif
+
+        " set the tab page number (for mouse clicks)
+        let s ..= '%' .. (i + 1) .. 'T'
+
+        " the label is made by MyTabLabel()
+        let s ..= ' %{MyTabLabel(' .. (i + 1) .. ')} '
+
+    endfor
+
+    " after the last tab fill with TabLineFill and reset tab page nr
+    let s ..= '%#TabLineFill#%T'
+
+    " right-align the label to close the current tab page
+    if tabpagenr('$') > 1
+        let s ..= '%=%#TabLine#%999Xclose'
+    endif
+
+    return s
+endfunction
+
+set tabline=%!MyTabLine()
+

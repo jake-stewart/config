@@ -1,22 +1,26 @@
+# home
+config_files/home/bashrc                 $HOME/.bashrc
+config_files/home/zshrc                  $HOME/.zshrc
+config_files/home/inputrc                $HOME/.inputrc
+config_files/home/dir_colors             $HOME/.dir_colors
+
+# fish
+config_files/fish/config.fish            /Users/jake/.config/fish/config.fish
+config_files/fish/smart_join.py          /Users/jake/.config/fish/smart_join.py
+
 # vim
 config_files/vim/vimrc                   $HOME/.vim/vimrc
 config_files/vim/vimpagerrc              $HOME/.vim/vimpagerrc
 config_files/vim/autoload/plug.vim       $HOME/.vim/autoload/plug.vim
 config_files/vim/after/ftplugin/c.vim    $HOME/.vim/after/ftplugin/c.vim
-config_files/vim/after/syntax/c.vim      $HOME/.vim/after/syntax/c.vim
-config_files/vim/after/syntax/java.vim   $HOME/.vim/after/syntax/java.vim
-config_files/vim/after/syntax/python.vim $HOME/.vim/after/syntax/python.vim
-config_files/vim/after/syntax/sh.vim     $HOME/.vim/after/syntax/sh.vim
-config_files/vim/after/syntax/tmux.vim   $HOME/.vim/after/syntax/tmux.vim
-config_files/vim/after/syntax/vim.vim    $HOME/.vim/after/syntax/vim.vim
 
 # tmux
 config_files/tmux/tmux.conf              $HOME/.tmux.conf
 config_files/tmux/statusline.sh          $HOME/.config/tmux/statusline.sh
 
-# home
-config_files/bashrc                      $HOME/.bashrc
-config_files/zshrc                       $HOME/.zshrc
-config_files/inputrc                     $HOME/.inputrc
-config_files/dir_colors                  $HOME/.dir_colors
+# kitty
+config_files/kitty/kitty.conf            $HOME/.config/kitty/kitty.conf
+config_files/kitty/tab_bar.py            $HOME/.config/kitty/tab_bar.py
 
+# karabiner
+config_files/karabiner/config.json       $HOME/.config/karabiner/assets/complex_modifications/config.json

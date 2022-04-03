@@ -36,7 +36,6 @@ nnoremap <c-w>q :q<CR>
 
 " APPEARANCE
 set background=dark
-set termguicolors
 syntax on
 colorscheme custom
 
@@ -88,6 +87,9 @@ au CmdLineEnter * set t_ve&vim
 au CmdLineLeave * if &buftype != 'terminal' | set t_ve= | endif
 
 function! ManTitleString()
+    if getline(1) !~ ".*diff --git"
+        set termguicolors
+    endif
     if &filetype == "man"
         let l:line = substitute(getline('1'), '(\d\+)\zs.*', '', '')
         let l:line = substitute(l:line, '(', ' (', '')
@@ -107,6 +109,7 @@ au BufWinEnter,WinEnter,FileType * call ManTitleString()
 " to stop vimpager overwriting mappings
 " so we overwrite their mappings after startup instead
 au VimEnter * call FixVimpager()
+
 
 function FixVimpager()
     set scrolloff=0
@@ -211,6 +214,8 @@ function FixVimpager()
     noremap <         <NOP>
     noremap >         <NOP>
     noremap ~         <NOP>
+
+
 endfunction
 
 " vim: ft=vim

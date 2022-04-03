@@ -1,12 +1,28 @@
 #!/bin/bash
 
-# COLORS
+# # DARK COLORS
+# bright_bg="#303030"
+# bright_fg="colour252"
+# normal_bg="#191919"
+# normal_fg="default"
+# dimmed_fg="#404040"
+# dimmed_bg="#191919"
+
+# MEDIUM COLORS
 bright_bg="#505050"
 bright_fg="colour252"
 normal_bg="#303030"
 normal_fg="default"
 dimmed_fg="#404040"
 dimmed_bg="#303030"
+
+# # LIGHT COLORS
+# bright_bg="#c7c7c7"
+# bright_fg="default"
+# normal_bg="#dddddd"
+# normal_fg="default"
+# dimmed_fg="#aaaaaa"
+# dimmed_bg="#dddddd"
 
 invalid_bright_bg="colour174"
 invalid_bright_fg="colour255"
@@ -46,21 +62,21 @@ for ((i = 1; i < 10; i++)); do
         if [[ $i == $active_window ]]; then
             [ $last_window -ne $SELECTED ] \
                 && printf "$bright_style" \
-                && $last_window=$SELECTED
+                && last_window=$SELECTED
         else
             [ $last_window -ne $ACTIVE ] \
                 && printf "$normal_style" \
-                && $last_window=$ACTIVE
+                && last_window=$ACTIVE
         fi
         ((idx++))
     else
         [ $last_window -ne $INACTIVE ] \
             && printf "$dimmed_style" \
-            && $last_window=$INACTIVE
+            && last_window=$INACTIVE
     fi
     printf " $i "
 done
 
 # RIGHT STATUS
 printf "#[align=right]"
-printf "$bright_style #{pane_title} $normal_style $(date "+%H:%M %d-%b-%y")"
+printf "$bright_style #{pane_title} $normal_style $(date "+%H:%M %d-%b-%y") "

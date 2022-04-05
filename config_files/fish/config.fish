@@ -30,7 +30,9 @@ if status is-interactive
     [ -d $HOME/.bin ] && set -x PATH "$HOME/.bin:$PATH"
     [ -d $HOME/.cargo/bin ] && set -x PATH "$HOME/.cargo/bin:$PATH"
 
-    # eval (fnm env --use-on-cd)
+    set -x NODE_OPTIONS "--openssl-legacy-provider"
+
+    fnm env --use-on-cd | source
 
     set fish_color_command normal
     set fish_color_param normal
@@ -166,15 +168,11 @@ if status is-interactive
             if [ -e $file ]
                 if [ $cmd = "" ]
                     if [ -d $file ]
-                        printf "cd $file\n"
-                        cd $file
-                        printf "\n"
-                        commandline -f repaint
+                        commandline "cd $file  "
+                        commandline -f execute
                     else
-                        printf "vim $file\n"
-                        vim $file
-                        printf "\n"
-                        commandline -f repaint
+                        commandline "vim $file  "
+                        commandline -f execute
                     end
                 else
                     set cursor (commandline -C)
@@ -227,6 +225,8 @@ if status is-interactive
 
     # using /bin/ls since fish has its own ls which adds too much noise
     alias ls="/bin/ls --color=auto"
+    alias ll="/bin/ls --color=auto -l"
+    alias la="/bin/ls --color=auto -a"
 
     fish_vi_key_bindings
     set fish_cursor_default     block      blink

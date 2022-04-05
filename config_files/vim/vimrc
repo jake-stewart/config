@@ -1,8 +1,11 @@
 let g:use_coc = 1
 
-let mapleader = "t"
+let mapleader = " "
 
-" BOX DRAWING CHARS {{{
+omap <space> <NOP>
+omap , <NOP>
+
+"  BOX DRAWING CHARS {{{
 " ┌─────────┬───────┐
 " │ digraph │ char  │
 " ├─────────┼───────┤
@@ -64,8 +67,9 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 " ignore .gitignore shit
 " let $FZF_DEFAULT_COMMAND = 'ag -g ""'
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
-nnoremap <leader>b :Buffers<cr>
-nnoremap <leader>e :FZF<cr>
+
+nnoremap ,b :Buffers<cr>
+nnoremap ,e :FZF<cr>
 
 call plug#end()
 " call glaive#Install()
@@ -90,6 +94,8 @@ autocmd User targets#mappings#user call targets#mappings#extend({
 nmap cia cIa
 nmap dia dIa
 nmap yia yIa
+
+
 
 " }}}
 
@@ -262,14 +268,14 @@ vnoremap <expr><leader>J Slide(1, 1)
 nnoremap <expr><leader>K Slide(-1, 1)
 vnoremap <expr><leader>K Slide(-1, 1)
 
-" remove search highlighting
-nnoremap <silent><space> :noh<CR>
+" 't'idy the screen and remove search highlighting
+nnoremap <silent>t :noh<CR>
 
 nnoremap <c-d> zt<c-d>M
 nnoremap <c-u> zb<c-u>M
 
 " toggle cursor column 
-nnoremap <silent><leader>c :exec &cuc ? "set nocuc" : "set cuc"<CR>
+nnoremap <silent>,c :exec &cuc ? "set nocuc" : "set cuc"<CR>
 
 " Make Y act like C and D
 nnoremap Y y$
@@ -284,13 +290,18 @@ function SmartQuit()
         try
             wq
         catch
-            write! ~/.cache/vim-force-quit-backup
-            quit!
+            if expand("%p") == ""
+                write! ~/.cache/vim-force-quit-backup
+                quit!
+            else
+                echoerr "Failed to write file '" . expand("%p") . "'."
+            endif
         endtry
     endtry
 endfunction
 
-nnoremap <leader>q :call SmartQuit()<CR> 
+nnoremap ,q :call SmartQuit()<CR> 
+nnoremap <silent>,w :w<CR>
 
 " map <c-k>zs to zero-width space
 exe 'digraph zs ' . 0x200b
@@ -454,11 +465,59 @@ function TabLine()
 
     " right-align the label to close the current tab page
     if tabpagenr('$') > 1
-        let s ..= '%=%#TabLine#%999Xclose'
+        let s ..= '%=%#TabLine#%999X'
     endif
 
     return s
 endfunction
 
 set tabline=%!TabLine()
+" }}}
 
+" {{{ TINY WORD
+function! JumpTinyWord(flags)
+    call search('\v([A-Z][A-Z]+|[A-Z][a-z]*|[a-z]+)', a:flags)
+endfunction
+
+function! JumpTinyBack(flags)
+    call search('\v([A-Z][A-Z]+|[A-Z][a-z]*|_\zs[a-z]+|<)', a:flags)
+endfunction
+
+function! JumpTinyEnd(flags)
+    call search('\v([A-Z][A-Z]*\zs[A-Z]|[A-Z][a-z]*\zs[a-z]|[a-z]*\zs[a-z])', a:flags)
+endfunction
+
+function! JumpTinyEndAddOne(flags)
+    call search('\v([A-Z][A-Z]*\zs[A-Z]|[A-Z][a-z]*\zs[a-z]|[a-z]*\zs[a-z])', a:flags)
+    normal l
+endfunction
+
+function! JumpTinyAroundEnd(flags)
+    call search('\v(([A-Z]+|[A-Z][a-z]+|[a-z]+)\zs_*_|[A-Z][a-z]*\zs[a-z]|[A-Z]*\zs[A-Z]|[a-z]*\zs[a-z])', a:flags)
+endfunction
+
+noremap <silent> <space>w :<C-U>call JumpTinyWord("W")<CR>
+noremap <silent> <space>b :<C-U>call JumpTinyBack("Wb")<CR>
+noremap <silent> <space>e :<C-U>call JumpTinyEnd("W")<CR>
+noremap <silent> <space>ge :<C-U>call JumpTinyEnd("Wb")<CR>
+
+onoremap <space>e :<C-U>call JumpTinyEndAddOne("W")<CR>
+
+function! InnerTinyWord()
+    call JumpTinyBack("Wbc")
+    normal! v
+    call JumpTinyEnd("W")
+endfunction
+
+function! AroundTinyWord()
+    call JumpTinyBack("Wbc")
+    normal! v
+    call JumpTinyAroundEnd("W")
+endfunction
+
+omap <silent> i<space>w :<C-U>call InnerTinyWord()<CR>
+xmap <silent> i<space>w :<C-U>call InnerTinyWord()<CR>
+
+omap <silent> a<space>w :<C-U>call AroundTinyWord()<CR>
+xmap <silent> a<space>w :<C-U>call AroundTinyWord()<CR>
+" }}}

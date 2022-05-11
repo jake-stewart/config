@@ -1,5 +1,6 @@
 from kitty.tab_bar import as_rgb
 from kitty.boss import get_boss
+from kitty.fast_data_types import add_timer
 import datetime
 
 def get_cwd():
@@ -131,14 +132,30 @@ cwd_cell = Cell(None, bright=True, shrink_func=shrink_cwd)
 time_cell = Cell(None)
 date_cell = Cell(None, separator=False)
 
+timer_id = None
+def _redraw_tab_bar(_):
+    global timer_id
+    timer_id = None
+    for tm in get_boss().all_tab_managers:
+        tm.mark_tab_bar_dirty()
+
 def draw_tab(draw_data, screen, tab, before,
              max_title_length, index, is_last, extra_data):
     if screen.cursor.x == 0:
         renderer.reset(draw_data, screen)
 
-    renderer.draw(Cell(tab.title, bright=tab.is_active))
+    
+    title = tab.title
+    if len(title) > 30:
+        title = title[:29] + "…"
+    renderer.draw(Cell(title, bright=tab.is_active))
 
     if is_last:
+        global timer_id
+        if timer_id is None:
+            now = datetime.datetime.now()
+            add_timer(_redraw_tab_bar, 60 - now.second, False)
+
         renderer.add_separator()
 
         now = datetime.datetime.now()

@@ -22,7 +22,101 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 alias py=python3
 
-# apply dircolors
-if [[ -f "$HOME/.dir_colors" ]]; then
-    eval $(dircolors -b $HOME/.dir_colors)
-fi
+# fun script kiddie stuff
+hack() {
+    tput civis
+    stty_orig=`stty -g`
+    stty -echo
+    timeout 1 tree /
+    timeout 1 ls -R /
+    sleep 0.5
+    hexdump /bin/bash
+    clear
+    timeout 1 traceroute google.com
+    clear
+    timeout 1 traceroute bing.com
+    clear
+    timeout 1 logs 1
+    timeout 0.5 logs 20
+    timeout 1.5 logs
+    echo
+    sleep 0.5
+    printf "[COMPLETE]"
+    sleep 1
+    printf " Access Granted."
+    sleep 1
+    echo
+    echo
+    stty $stty_orig
+    tput cnorm
+}
+
+inject() {
+    # timeout 1 logs 5
+    # clear
+    echo
+    printf "INITIALIZING"
+    sleep 0.25
+    for i in $(seq 3); do
+        printf "."
+        sleep 0.25
+    done
+    printf "\rINITIALIZING   "
+    printf "\rINITIALIZING"
+    sleep 0.25
+    printf "."
+    sleep 0.2
+    echo ".. DONE"
+    tput civis
+    stty_orig=`stty -g`
+    stty -echo
+    for file in /bin/*; do
+        wc $file
+        sleep 0.01
+    done
+    echo
+    echo "BOOTLOADER INJECTED"
+    stty $stty_orig
+    tput cnorm
+}
+
+override() {
+    tput civis
+    stty_orig=`stty -g`
+    stty -echo
+    timeout 1 traceroute google.com
+    clear
+    timeout 1 traceroute bing.com
+    clear
+    top
+    stty $stty_orig
+    tput cnorm
+}
+
+hidetrace() {
+    sleep 3
+}
+
+bootload() {
+    tput civis
+    stty_orig=`stty -g`
+    stty -echo
+    timeout 1 tree /
+    timeout 1 ls -R /
+    sleep 0.5
+    hexdump /bin/bash
+    clear
+    timeout 1 logs 1
+    timeout 0.5 logs 20
+    timeout 1.5 logs
+    echo
+    sleep 0.5
+    printf "[COMPLETE]"
+    sleep 1
+    printf " Data extracted."
+    sleep 1
+    echo
+    echo
+    stty $stty_orig
+    tput cnorm
+}

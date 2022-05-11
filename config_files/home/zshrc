@@ -2,10 +2,86 @@
 KEYTIMEOUT=1
 bindkey -v
 
+alias q=exit
+
+alias netcli=/Applications/NetLinkz/peer/netcli
+
+export HOMEBREW_NO_EMOJI=1
+
+export NODE_OPTIONS="--openssl-legacy-provider"
+
+# export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-14.0.2.jdk/Contents/Home/"
+export JAVA_HOME="/Users/jake/Library/Java/JavaVirtualMachines/openjdk-17.0.2/Contents/Home/"
+
+whatis() {
+    [[ $? -eq 1 ]] && echo "Usage: whatis {command}" && exit 1;
+    for arg in $@; do
+        man -P cat $arg \
+            | awk 'name==1{print $0; exit} /N.*A.*M.*E[^A-Za-z]*$/{name=1}' \
+            | sed 's/^[ \t]*//g'
+    done
+}
+# Change cursor shape for different vi modes.
+function zle-keymap-select() {
+    if [[ ${KEYMAP} == vicmd ]] ||
+        [[ $1 = 'block' ]]; then
+        echo -ne '\e[1 q'
+    elif [[ ${KEYMAP} == viopp ]];then
+        echo -ne '\e[3 q'
+    elif [[ ${KEYMAP} == main ]] ||
+        [[ ${KEYMAP} == viins ]] ||
+        [[ ${KEYMAP} = '' ]] ||
+        [[ $1 = 'beam' ]]; then
+        echo -ne '\e[5 q'
+    fi
+}
+zle -N zle-keymap-select
+zle-line-init() {
+    # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
+    zle -K viins
+    echo -ne "\e[5 q"
+}
+zle -N zle-line-init
+echo -ne '\e[5 q' # Use beam shape cursor on startup.
+preexec() { echo -ne '\e[1 q' ;} # Use block shape cursor for each new prompt.
+
+bindkey "^?" backward-delete-char
+
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+bindkey '^K' autosuggest-accept
+# bindkey '^[[Z' autosuggest-accept  # shift + tab  | autosuggest
+
+
 source "$HOME/.config/zsh/zsh-system-clipboard/zsh-system-clipboard.zsh"
+source "$HOME/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+source "$HOME/.config/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+ZSH_HIGHLIGHT_STYLES[comment]='fg=red'
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=green'
+ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=green'
+ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument-unclosed]='fg=green'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=green'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument-unclosed]='fg=green'
+ZSH_HIGHLIGHT_STYLES[command]='none'
+ZSH_HIGHLIGHT_STYLES[builtin]='none'
+ZSH_HIGHLIGHT_STYLES[precommand]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[redirection]='fg=cyan,bold'
+ZSH_HIGHLIGHT_STYLES[arg0]='none'
+ZSH_HIGHLIGHT_STYLES[path]='none'
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red'
+ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=magenta'
+# ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=cyan'
+# ZSH_HIGHLIGHT_STYLES[suffix-aliases]='fg=cyan'
+# ZSH_HIGHLIGHT_STYLES[global-aliases]='fg=cyan'
+
+# ZSH_HIGHLIGHT_STYLES[default]='fg=yellow'
+
 
 export EDITOR=vim
 export PAGER=vimpager
+setopt INTERACTIVE_COMMENTS
 
 # add ~/.bin to path
 [[ -d $HOME/.bin ]] && \
@@ -49,14 +125,39 @@ export HISTSIZE=1000000000
 export SAVEHIST=$HISTSIZE
 # setopt EXTENDED_HISTORY
 
+
+
 # case insensitive completion
-# autoload -Uz compinit && compinit
-# setopt MENU_COMPLETE
 setopt nocaseglob
 setopt no_list_ambiguous
 setopt complete_in_word
+
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=()
+ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=()
+
 autoload -Uz compinit && compinit
-zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Za-z}' 'l:|{a-z}=*'
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:]}={[:upper:]}' 'm:{[:lower:]}={[:upper:]} r:|?=**'
+bindkey '^I' complete-word
+
+
+complete-word() {
+  _main_complete;
+  compstate[list]='list';
+  local word=$PREFIX$SUFFIX
+  (( compstate[unambiguous_cursor] <= ${#word} )) && compstate[insert]='menu';
+}
+
+TRAPINT() { 
+    if [ "${KEYMAP}" = "main" -o "${KEYMAP}" = "viins" -o "${KEYMAP}" = "vicmd" -o "${KEYMAP}" = "viopp" ]; then
+        zle end-of-line
+        echo "\e[90m^C\e[K\e[m"
+        zle kill-buffer
+        echo -n "\r\e[K"
+        return 128
+    else
+        return ${128+$1}
+    fi
+}
 
 
 cdls() {
@@ -86,9 +187,8 @@ alias  .....="cd ../../../.."
 alias ......="cd ../../../../.."
 
 fcd() {
-    out="$HOME/.cache/fcd_dest_this_file_will_be_deleted"
-    echo "" > "$out"
-    ~/.bin/fcd ~/.config/fcd/directories.txt "$out"
+    out="$HOME/.cache/fcd_dest"
+    ~/.bin/fcd
     if [ -e "$out" ]; then
         file=$(cat "$out")
 
@@ -124,7 +224,7 @@ function ranger {
 
 bindkey -s '' 'fcd'
 
-alias jmatrix="jmatrix --bg #1b1b20 --trail 12"
+alias jmatrix="jmatrix --bg '#282932' --trail 12"
 
 lfcd () {
     tmp="$(mktemp)"
@@ -144,4 +244,56 @@ alias cd=cdls
 
 mvcd() {
     mv $@ && cdls "$@[-1]"
+}
+
+catls() {
+    if [[ "$#" -eq "1" ]]; then
+        [[ -f "$1" ]] && cat "$1" || ls "$1";
+    else
+        cat "$@"
+    fi
+}
+
+lscat() {
+    if [[ "$#" -eq "1" ]]; then
+        [[ -f "$1" ]] && cat "$1" || ls "$1";
+    else
+        ls "$@"
+    fi
+}
+
+alias ls=lscat
+alias cat=catls
+
+
+# script kiddie stuff
+remote() {
+    echo
+    timeout 4 traceroute cia.gov
+    clear
+    echo "[SUCCESS] Starting session..."
+    sleep 0.8
+    echo
+    sleep 0.05
+    echo "Remote BASH session - www.cia.gov:22"
+    sleep 0.05
+    echo
+    sleep 0.05
+    echo "Confidential - Do not leave session unattended."
+    sleep 0.05
+    echo
+    sleep 0.05
+    echo "Last Login     Thu  5 May 2022 23:52:38 AWST"
+    sleep 0.05
+    echo "OS             CentOS Linux 8.5.2110"
+    sleep 0.05
+    echo "Kernel         21.1.0"
+    sleep 0.05
+    echo "Uptime         3 months, 22 days, 3 hours, 38 mins"
+    sleep 0.05
+    echo "Current Users  22"
+    sleep 0.05
+    echo
+    bash
+    echo
 }

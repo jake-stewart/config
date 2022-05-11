@@ -1,147 +1,74 @@
-let g:use_coc = 1
-
+set nocompatible
 let mapleader = " "
 
-omap <space> <NOP>
+" omap <space> <NOP>
 omap , <NOP>
-
-"  BOX DRAWING CHARS {{{
-" ┌─────────┬───────┐
-" │ digraph │ char  │
-" ├─────────┼───────┤
-" │ dr      │ ┏     │
-" │ dl      │     ┓ │
-" │ ur      │ ┗     │
-" │ ul      │     ┛ │
-" │ dh      │ ┳     │
-" │ uh      │     ┻ │
-" │ lv      │ ┫     │
-" │ rv      │     ┣ │
-" │ hv      │ ╋     │
-" │ hh      │     ━ │
-" │ vv      │ ┃     │
-" └─────────┴───────┘
-" }}}
 
 " PLUGINS {{{
 
 let g:polyglot_disabled = ['autoindent', 'sensible', 'ftdetect']
 
 call plug#begin("~/.vim/plugged")
+" Plug 'justinmk/vim-sneak'
 Plug 'machakann/vim-swap'
 Plug 'glts/vim-textobj-comment'
 Plug 'tpope/vim-commentary'
+Plug 'rakr/vim-one'
+Plug 'inkarkat/vim-ingo-library'
 Plug 'kana/vim-textobj-user'
 Plug 'bfrg/vim-cpp-modern'
+Plug 'tpope/vim-abolish'
 Plug 'sheerun/vim-polyglot'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'wellle/targets.vim'
 Plug 'machakann/vim-sandwich'
 Plug 'junegunn/vim-easy-align'
-Plug 'rakr/vim-one'
-
-if g:use_coc
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-    nmap <silent> gd <Plug>(coc-definition)
-    nmap <silent> gy <Plug>(coc-type-definition)
-    nmap <silent> gi <Plug>(coc-implementation)
-    nmap <silent> gr <Plug>(coc-references)
-
-    " Use tab for trigger completion with characters ahead and navigate.
-    " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-    " other plugin before putting this into your config.
-    inoremap <silent><expr> <TAB>
-          \ pumvisible() ? "\<C-n>" :
-          \ <SID>check_back_space() ? "\<TAB>" :
-          \ coc#refresh()
-    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-    function! s:check_back_space() abort
-      let col = col('.') - 1
-      return !col || getline('.')[col - 1]  =~# '\s'
-    endfunction
-end
-
+" Plug 'vim-scripts/EnhancedJumps'
+Plug 'chaoren/vim-wordmotion'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-" ignore .gitignore shit
-" let $FZF_DEFAULT_COMMAND = 'ag -g ""'
-let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
-
-nnoremap ,b :Buffers<cr>
-nnoremap ,e :FZF<cr>
-
 call plug#end()
-" call glaive#Install()
 
-set signcolumn=number
+function! Source(fname) 
+    exe "source " . $HOME . "/.vim/" . a:fname
+endfunction
 
-" }}}
-
-" OTHER PLUGIN SETTINGS {{{
-
-" vim-easy-align
-xmap ga <Plug>(EasyAlign)
-nmap ga <Plug>(EasyAlign)
-
-" vim-sandwich
-runtime macros/sandwich/keymap/surround.vim
-
-" targets.vim
-autocmd User targets#mappings#user call targets#mappings#extend({
-    \ 'b': {'pair': [{'o':'(', 'c':')'}]}
-    \ })
-nmap cia cIa
-nmap dia dIa
-nmap yia yIa
-
-
-
-" }}}
-
-" COMPATIBILITY {{{
-
-set nocompatible
-
-if has("mouse_sgr")
-    set ttymouse=sgr
-else
-    set ttymouse=xterm2
-end
-
-if &term =~ '^xterm.\(256color\|kitty\)'
-    let &t_SI = "\<Esc>[5 q"
-    let &t_EI = "\<Esc>[1 q"
-    let &t_SR = "\<Esc>[4 q"
-    " let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    " let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-    " let &t_Cs = "\e[4:3m"
-    " let &t_Ce = "\e[4:0m"
-endif
+call Source("plugin_config/sandwich.vim")
+call Source("plugin_config/targets.vim")
+call Source("plugin_config/easyalign.vim")
+" call Source("plugin_config/enhanced_jumps.vim")
+call Source("plugin_config/wordmotion.vim")
+call Source("plugin_config/coc.vim")
+call Source("plugin_config/fzf.vim")
 
 " }}}
 
 " APPEARANCE {{{
 
+
+hi Comment gui=italic cterm=italic
+hi Todo gui=italic cterm=italic
+
+if &term =~ '^xterm.\(256color\|kitty\)'
+    let &t_SI = "\<Esc>[5 q"
+    let &t_EI = "\<Esc>[1 q"
+    let &t_SR = "\<Esc>[4 q"
+endif
+
+" }}}
+
+" SETTINGS {{{
+
+" title
 set title
-" set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:~:h\")})%)%(\ %a%)
-" set titlestring=vim\ -\ %t%(\ %M%)%(\ %a%)
 set titlestring=%t%(\ %M%)%(\ %a%)
-set foldmethod=marker
 
-" set scrolloff=5
-
+" colorscheme
 set background=dark
 set termguicolors
 syntax on
 colorscheme custom
-
-" set background=light
-" set termguicolors
-" syntax on
-" colorscheme one
-
-
 
 set shortmess+=I   " remove start page
 set showmatch
@@ -152,15 +79,8 @@ set ruler
 set number
 set cursorline
 set belloff=all    " disable sound
-" set showcmd
 set showmatch
-
-hi Comment gui=italic cterm=italic
-hi Todo gui=italic cterm=italic
-
-" }}}
-
-" SETTINGS {{{
+set nojoinspaces   " stop double space when joining sentences
 
 set noswapfile
 
@@ -181,6 +101,7 @@ endif
 if !isdirectory($HOME."/.vim/undodir")
     call mkdir($HOME."/.vim/undodir", "", 0700)
 endif
+
 set undodir=~/.vim/undodir
 set undofile
 set undolevels=5000
@@ -192,6 +113,7 @@ set smartcase
 set ignorecase
 
 " other
+set foldmethod=marker               " use {{{ and }}} for folding
 set lazyredraw                      " run macros without updating screen
 set clipboard^=unnamed,unnamedplus  " make vim use system clipboard
 set encoding=utf-8                  " unicode characters
@@ -199,22 +121,18 @@ set hidden                          " allow buffer switching without saving
 set backspace=indent,eol,start      " make backspace work as expected
 set mouse=a                         " enable mouse
 set ttimeoutlen=1                   " time waited for terminal codes
-
+set signcolumn=number
 " set linebreak
 " set breakindent
 " set breakindentopt=shift:8
 " set cursorlineopt=screenline
 
-" map j gj
-" map k gk
-
 " }}}
 
 " AUTOCOMMANDS {{{
 
-autocmd BufNewFile,BufRead *.jn setf jnote
-autocmd BufNewFile,BufRead *.tbl setf tablescript
-autocmd FileType * setlocal fo-=c fo-=r fo-=o  " remove autocommenting
+" remove autocommenting
+autocmd FileType * setlocal fo-=c fo-=r fo-=o
 
 " go to last position before exiting vim
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
@@ -223,301 +141,72 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'
 
 " MAPPINGS {{{
 
-function! GoStartParagraph()
-    call cursor(0, 1)
-    let l:start_line = line('.')
-    let l:line = search("\\v(^\\s*\\n|%^)\\zs\\s*\\S+.*$", "Wb")
-    let l:diff = l:start_line - l:line
-    if l:diff > 0
-        return l:diff . 'k^'
-    endif
-    return ""
-endfunction
-
-function! GoEndParagraph()
-    let l:start_line = line('.')
-    let l:line = search("\\v\\s*\\S+.*\\ze(\\n\\s*$|%$)", "W")
-    let l:diff = l:line - l:start_line
-    if l:diff > 0
-        return l:diff . 'j^'
-    endif
-    return ""
-endfunction
-
-
-" } and {
-vnoremap <silent><expr><cr> GoEndParagraph()
-vnoremap <silent><expr>   GoStartParagraph()
-nnoremap <silent><expr><cr> GoEndParagraph()
-nnoremap <silent><expr>   GoStartParagraph()
-onoremap <silent><expr><cr> GoEndParagraph()
-onoremap <silent><expr>   GoStartParagraph()
-
-
-
-nnoremap <c-l> :bn<cr>
-nnoremap <backspace> :bp<cr>
-
-nnoremap <expr><leader>j Slide(1, 0)
-vnoremap <expr><leader>j Slide(1, 0)
-nnoremap <expr><leader>k Slide(-1, 0)
-vnoremap <expr><leader>k Slide(-1, 0)
-
-nnoremap <expr><leader>J Slide(1, 1)
-vnoremap <expr><leader>J Slide(1, 1)
-nnoremap <expr><leader>K Slide(-1, 1)
-vnoremap <expr><leader>K Slide(-1, 1)
-
-" 't'idy the screen and remove search highlighting
 nnoremap <silent>t :noh<CR>
 
-nnoremap <c-d> zt<c-d>M
-nnoremap <c-u> zb<c-u>M
+nnoremap <c-d> M10jzz
+nnoremap <c-u> M10kzz
+
+map gh ^
+map gl $
+
+nnoremap Y y$
+nnoremap Q @q
+
+inoremap {<CR> {<cr>}<esc>O
+inoremap <C-B> <esc>A <esc>ciw {<CR>}<esc>O
+
+" nnoremap <silent><space>l /\v[\[({]<CR>:noh<CR>
+" nnoremap <silent><space>h ?\v[\[({]<CR>:noh<CR>
+" nnoremap ( F(
+" nnoremap ) f)
+" nnoremap <silent>) /\v[\[({]<CR>:noh<CR>
+" nnoremap <silent>( ?\v[\[({]<CR>:noh<CR>
+
+nnoremap <silent>)  :call search("(", "W")<CR>
+nnoremap <silent>(  :call search("(", "Wb")<CR>
+nnoremap <silent>g) :call search("\v[\[({]", "W")<CR>
+nnoremap <silent>g( :call search("\v[\[({]", "Wb")<CR>
+nnoremap <silent>g] :call search("[", "W")<CR>
+nnoremap <silent>g[ :call search("[", "Wb")<CR>
+nnoremap <silent>g} :call search("{", "W")<CR>
+nnoremap <silent>g{ :call search("{", "Wb")<CR>
 
 " toggle cursor column 
 nnoremap <silent>,c :exec &cuc ? "set nocuc" : "set cuc"<CR>
-
-" Make Y act like C and D
-nnoremap Y y$
-
-" Replace Ex mode with run q macro
-nnoremap Q @q
-
-function SmartQuit()
-    try
-        quit
-    catch
-        try
-            wq
-        catch
-            if expand("%p") == ""
-                write! ~/.cache/vim-force-quit-backup
-                quit!
-            else
-                echoerr "Failed to write file '" . expand("%p") . "'."
-            endif
-        endtry
-    endtry
-endfunction
-
-nnoremap ,q :call SmartQuit()<CR> 
-nnoremap <silent>,w :w<CR>
 
 " map <c-k>zs to zero-width space
 exe 'digraph zs ' . 0x200b
 
 " }}}
 
-" FUNCTIONS {{{
+call Source("functions/smartquit.vim")
+call Source("functions/paragraphjump.vim")
+" call Source("functions/sectionjump.vim")
+call Source("functions/bettersneak.vim")
+call Source("functions/synstack.vim")
+call Source("functions/slide.vim")
+call Source("functions/tabline.vim")
+call Source("functions/fcd.vim")
 
-function! SynStack()
-    if !exists("*synstack")
-        return
+function! JumpOutFile()
+    let l:current_file = expand("%:p")
+    if l:current_file != ""
+        while l:current_file == expand("%:p")
+            exe "norm \<C-o>"
+        endwhile
     endif
-    return map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+    f
 endfunction
 
-function! VirtIdx(string, idx)
-    if len(a:string) == 0
-        return ' '
-    endif
-    let l:idx = 0
-    for char in a:string
-        if char == "\t"
-            let l:idx = (l:idx / &ts + 1) * &ts
-        else
-            let l:idx += strdisplaywidth(char)
-        endif
-
-        if l:idx >= a:idx
-            break
-        endif
-    endfor
-    return char
-endfunction
-
-function! Slide(direction, smart_syntax)
-    let l:syntax = a:smart_syntax && exists("*synstack")
-
-    let l:col = col('.')
-    let l:line = line('.')
-    let l:max_line = line('$')
-
-    if l:syntax
-        let l:stack = synstack(line('.'), col('.'))
-    endif
-
-    if l:col > 1
-        let l:char_before = VirtIdx(getline(l:line), l:col - 1)
-        let l:space_before = (l:char_before == ' ' || l:char_before == '' || l:char_before == '	')
-    endif
-
-    let l:char_after = VirtIdx(getline(l:line), l:col)
-    let l:space_after = l:char_after == ' ' || l:char_after == '' || l:char_after == '	'
-
-    while 1
-        let l:line += a:direction
-
-        if l:line > l:max_line || l:line == 0
-            break
-        endif
-
-        if strdisplaywidth(getline(l:line)) < l:col - 1
-            break
-        endif
-
-        if l:syntax
-            let l:newstack = synstack(l:line, l:col)
-            if len(l:newstack) == 0
-                if len(l:stack) > 0
-                    let g:bruh = 1
-                    break
-                endif
-            elseif len(l:stack) == 0
-                let g:bruh = 2
-                break
-            elseif l:stack[-1] != l:newstack[-1]
-                let g:bruh = 3
-                break
-            endif
-        endif
-
-        let l:char_after = VirtIdx(getline(l:line), l:col)
-        let l:new_space_after = l:char_after == ' ' || l:char_after == '' || l:char_after == '	'
-        if l:new_space_after != l:space_after
-            break
-        endif
-
-        if l:col > 1
-            let l:char_before = VirtIdx(getline(l:line), l:col - 1)
-            let l:new_space_before = (l:char_before == ' ' || l:char_before == '' || l:char_before == '	')
-            if l:new_space_before != l:space_before
-                break
-            endif
-        endif
+function! JumpInFile()
+    let l:current_file = expand("%:p")
+    while l:current_file == expand("%:p")
+        exe "norm \<C-i>"
     endwhile
-
-    if a:direction == 1
-        let l:jump = l:line - line('.') - 1
-        let l:jump_char = 'j'
-    else
-        let l:jump = line('.') - l:line - 1
-        let l:jump_char = 'k'
-    endif
-
-    if l:jump == 0
-        return ''
-    elseif l:jump == 1
-        return l:jump_char
-    else
-        return l:jump . l:jump_char
-    endif
+    f
 endfunction
 
-let java_highlight_all="1"
-
-" }}}
-
-" {{{ TABLINE
-
-function TabLabel(n)
-    let buflist = tabpagebuflist(a:n)
-    let winnr = tabpagewinnr(a:n)
-    let l:name = bufname(buflist[winnr - 1])
-    if l:name == ""
-        let l:name = "[No Name]"
-    else
-
-        let l:words = split(l:name, '/')
-        if len(l:words) == 1
-            let l:name = "/" . words[0]
-        else
-            let l:name = words[-2] . "/" . words[-1]
-        endif
-    endif
-
-    if getbufvar(buflist[winnr - 1], "&modified")
-        let l:name .= " +"
-    endif
-    return l:name
-endfunction
-
-function TabLine()
-    let s = ''
-    for i in range(tabpagenr('$'))
-        " select the highlighting
-        if i + 1 == tabpagenr()
-            let s ..= '%#TabLineSel#'
-        else
-            let s ..= '%#TabLine#'
-        endif
-
-        " set the tab page number (for mouse clicks)
-        let s ..= '%' .. (i + 1) .. 'T'
-
-        " the label is made by TabLabel()
-        let s ..= ' %{TabLabel(' .. (i + 1) .. ')} '
-
-    endfor
-
-    " after the last tab fill with TabLineFill and reset tab page nr
-    let s ..= '%#TabLineFill#%T'
-
-    " right-align the label to close the current tab page
-    if tabpagenr('$') > 1
-        let s ..= '%=%#TabLine#%999X'
-    endif
-
-    return s
-endfunction
-
-set tabline=%!TabLine()
-" }}}
-
-" {{{ TINY WORD
-function! JumpTinyWord(flags)
-    call search('\v([A-Z][A-Z]+|[A-Z][a-z]*|[a-z]+)', a:flags)
-endfunction
-
-function! JumpTinyBack(flags)
-    call search('\v([A-Z][A-Z]+|[A-Z][a-z]*|_\zs[a-z]+|<)', a:flags)
-endfunction
-
-function! JumpTinyEnd(flags)
-    call search('\v([A-Z][A-Z]*\zs[A-Z]|[A-Z][a-z]*\zs[a-z]|[a-z]*\zs[a-z])', a:flags)
-endfunction
-
-function! JumpTinyEndAddOne(flags)
-    call search('\v([A-Z][A-Z]*\zs[A-Z]|[A-Z][a-z]*\zs[a-z]|[a-z]*\zs[a-z])', a:flags)
-    normal l
-endfunction
-
-function! JumpTinyAroundEnd(flags)
-    call search('\v(([A-Z]+|[A-Z][a-z]+|[a-z]+)\zs_*_|[A-Z][a-z]*\zs[a-z]|[A-Z]*\zs[A-Z]|[a-z]*\zs[a-z])', a:flags)
-endfunction
-
-noremap <silent> <space>w :<C-U>call JumpTinyWord("W")<CR>
-noremap <silent> <space>b :<C-U>call JumpTinyBack("Wb")<CR>
-noremap <silent> <space>e :<C-U>call JumpTinyEnd("W")<CR>
-noremap <silent> <space>ge :<C-U>call JumpTinyEnd("Wb")<CR>
-
-onoremap <space>e :<C-U>call JumpTinyEndAddOne("W")<CR>
-
-function! InnerTinyWord()
-    call JumpTinyBack("Wbc")
-    normal! v
-    call JumpTinyEnd("W")
-endfunction
-
-function! AroundTinyWord()
-    call JumpTinyBack("Wbc")
-    normal! v
-    call JumpTinyAroundEnd("W")
-endfunction
-
-omap <silent> i<space>w :<C-U>call InnerTinyWord()<CR>
-xmap <silent> i<space>w :<C-U>call InnerTinyWord()<CR>
-
-omap <silent> a<space>w :<C-U>call AroundTinyWord()<CR>
-xmap <silent> a<space>w :<C-U>call AroundTinyWord()<CR>
-" }}}
+" nnoremap <silent><leader>o :call JumpOutFile()<CR>
+" nnoremap <silent><leader>i :call JumpInFile()<CR>
+nnoremap <silent><leader>o <C-o>
+nnoremap <silent><leader>i <C-i>

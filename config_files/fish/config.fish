@@ -3,6 +3,8 @@ set PPID $fish_pid
 set -x EDITOR vim
 set -x PAGER  vimpager
 
+fnm env --use-on-cd | source
+
 function fish_prompt
     if [ (string split '' $history[1])[1] = "#" ]
         echo all | history delete --prefix "#" >/dev/null
@@ -32,8 +34,6 @@ if status is-interactive
 
     set -x NODE_OPTIONS "--openssl-legacy-provider"
 
-    fnm env --use-on-cd | source
-
     set fish_color_command normal
     set fish_color_param normal
     set fish_color_end normal
@@ -49,7 +49,9 @@ if status is-interactive
     # remove parent directory prefix from suggestions
     # just sets color to bg color so it disappears
     # this "feature" is just annoying noise
-    set fish_pager_color_prefix "#1b1b20"
+    # set fish_pager_color_prefix "#1b1b20"
+
+    set fish_pager_color_prefix brblack
 
 
     set __smart_join_path (dirname (status --current-filename))"/smart_join.py"
@@ -256,4 +258,15 @@ if status is-interactive
     bind -M insert  \cN 'commandline -f complete'
     bind -M insert  \cF fcd
     bind -M default \cF fcd
+
+    bind -M default \cN 'commandline -f history-search-forward'
+    bind -M default \cP 'commandline -f history-search-backward'
+    bind -M default \cP 'commandline -f history-search-backward'
+    bind -M insert -m default \cP 'commandline -f history-search-backward'
+
+    bind x begin-selection kill-selection end-selection
+    bind p forward-char yank backward-char
+
+    # bind dw begin-selection forward-word swap-selection-start-stop kill-selection end-selection
+    # bind yw begin-selection forward-word kill-selection end-selection yank backward-word
 end

@@ -216,7 +216,8 @@ backup_dests() {
         src="${dests[i]}"
         if [[ -e "$src" ]]; then
             mkdir -p "$(dirname "$dest")"
-            cp "$src" "$dest"
+            rm -rf "$dest"
+            cp -r "$src" "$dest"
         fi
     done
     echo "Configs backed up to $BACKUP_DIR."
@@ -233,7 +234,8 @@ apply_sources() {
         if [[ ! -e "${dests[i]}" ]]; then
             created_files+=("${dests[i]}")
         fi
-        cp "${sources[i]}" "${dests[i]}"
+        rm -rf "${dests[i]}"
+        cp -r "${sources[i]}" "${dests[i]}"
     done
     echo "Done."
 }
@@ -252,7 +254,8 @@ restore_backup() {
 
     for ((i = 0; i < N_CONFIGS; i++)); do
         if [[ -e "$BACKUP_DIR/${sources[i]}" ]]; then
-            cp "$BACKUP_DIR/${sources[i]}" "${dests[i]}"
+            rm -rf "${dests[i]}"
+            cp -r "$BACKUP_DIR/${sources[i]}" "${dests[i]}"
         fi
     done
     echo "Done."
@@ -267,7 +270,8 @@ update_sources() {
             if [[ ! -e "$parent" ]]; then
                 create_dirs "$parent" > /dev/null
             fi
-            cp "${dests[i]}" "${sources[i]}"
+            rm -rf "${sources[i]}"
+            cp -r "${dests[i]}" "${sources[i]}"
         else
             echo "${dests[i]} does not exist, skipped."
         fi

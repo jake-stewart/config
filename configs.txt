@@ -1,8 +1,14 @@
 # home
 config_files/home/bashrc     $HOME/.bashrc
-config_files/home/zshrc      $HOME/.zshrc
 config_files/home/inputrc    $HOME/.inputrc
 config_files/home/dir_colors $HOME/.dir_colors
+
+# zsh
+config_files/zsh/zshrc                   $HOME/.zshrc
+config_files/zsh/zsh-autocomplete        $HOME/.config/zsh/zsh-autocomplete
+config_files/zsh/zsh-autosuggestions     $HOME/.config/zsh/zsh-autosuggestions
+config_files/zsh/zsh-syntax-highlighting $HOME/.config/zsh/zsh-syntax-highlighting
+config_files/zsh/zsh-system-clipboard    $HOME/.config/zsh/zsh-system-clipboard
 
 # fish
 config_files/fish/config.fish   $HOME/.config/fish/config.fish

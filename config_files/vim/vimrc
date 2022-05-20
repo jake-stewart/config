@@ -152,8 +152,8 @@ map gl $
 nnoremap Y y$
 nnoremap Q @q
 
-inoremap {<CR> {<cr>}<esc>O
-inoremap <C-B> <esc>A <esc>ciw {<CR>}<esc>O
+" inoremap {<CR> {<cr>}<esc>O
+inoremap  <esc>A <esc>ciw {<CR>}<esc>O
 
 " nnoremap <silent><space>l /\v[\[({]<CR>:noh<CR>
 " nnoremap <silent><space>h ?\v[\[({]<CR>:noh<CR>

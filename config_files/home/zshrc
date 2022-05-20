@@ -3,15 +3,21 @@ KEYTIMEOUT=1
 bindkey -v
 
 alias q=exit
+alias vim=nvim
 
 alias netcli=/Applications/NetLinkz/peer/netcli
 
 export HOMEBREW_NO_EMOJI=1
+export COLORTERM="truecolor"
+
+
+export FZF_DEFAULT_COMMAND="fd -E '*.iml' --exclude={.git,.idea,.vscode,.sass-cache,.class,__pycache__,node_modules,target,build,tmp} --type f"
 
 export NODE_OPTIONS="--openssl-legacy-provider"
 
 # export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-14.0.2.jdk/Contents/Home/"
 export JAVA_HOME="/Users/jake/Library/Java/JavaVirtualMachines/openjdk-17.0.2/Contents/Home/"
+export JDTLS_HOME="/usr/local/Cellar/jdtls/1.11.0/libexec"
 
 whatis() {
     [[ $? -eq 1 ]] && echo "Usage: whatis {command}" && exit 1;
@@ -79,7 +85,7 @@ ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=magenta'
 # ZSH_HIGHLIGHT_STYLES[default]='fg=yellow'
 
 
-export EDITOR=vim
+export EDITOR=nvim
 export PAGER=vimpager
 setopt INTERACTIVE_COMMENTS
 
@@ -90,11 +96,22 @@ setopt INTERACTIVE_COMMENTS
 [[ -d $HOME/.cargo/bin ]] && \
     export PATH="$HOME/.cargo/bin:$PATH"
 
+branch_name()
+{
+  branch=$(git symbolic-ref HEAD 2> /dev/null | awk 'BEGIN{FS="/"} {print $NF}')
+  if [[ $branch == "" ]];
+  then
+    :
+  else
+    echo '['$branch'] '
+  fi
+}
+
 case `uname` in
     Darwin)
         setopt PROMPT_SUBST
         # jesus fuck
-        PROMPT='%40<...<$( [[ $(pwd) == "/" ]] && echo "/" || echo $(pwd | awk -F/ '"'"'{print tolower($NF)}'"'"'))%<< $ '
+        PROMPT='$(branch_name)%40<...<$( [[ $(pwd) == "/" ]] && echo "/" || echo $(pwd | awk -F/ '"'"'{print tolower($NF)}'"'"'))%<< $ '
         ;;
     Linux | FreeBSD)
         PROMPT="%d $ "
@@ -199,7 +216,7 @@ fcd() {
             if [ -d "$file" ]; then
                 cd "$file"; ls
             else
-                vim "$file"
+                nvim "$file"
             fi
         fi
     fi
@@ -234,6 +251,7 @@ lfcd () {
         rm -f "$tmp" >/dev/null
         [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
     fi
+    ls
 }
 alias lf=lfcd
 

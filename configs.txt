@@ -8,6 +8,11 @@ config_files/home/zshrc      $HOME/.zshrc
 config_files/fish/config.fish   $HOME/.config/fish/config.fish
 config_files/fish/smart_join.py $HOME/.config/fish/smart_join.py
 
+# nvim
+config_files/nvim/init.vim       $HOME/.config/nvim/init.vim
+config_files/nvim/custom.vim     $HOME/.config/nvim/colors/custom.vim
+config_files/nvim/packer.nvim    $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
+
 # vim
 config_files/vim/vimrc                            $HOME/.vim/vimrc
 config_files/vim/custom.vim                       $HOME/.vim/colors/custom.vim

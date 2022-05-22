@@ -1,3 +1,10 @@
+"  _       _ _               _           
+" (_)_ __ (_) |_      __   _(_)_ __ ___  
+" | | '_ \| | __|     \ \ / / | '_ ` _ \ 
+" | | | | | | |_   _   \ V /| | | | | | |
+" |_|_| |_|_|\__| (_)   \_/ |_|_| |_| |_|
+
+" Settings {{{1
 let mapleader=" "
 
 " title
@@ -23,6 +30,7 @@ set showmatch
 set nojoinspaces   " stop double space when joining sentences
 
 set noswapfile
+set updatetime=300
 
 " splits
 set splitright
@@ -35,18 +43,10 @@ set softtabstop=4
 set shiftwidth=4
 set smarttab
 
-let $BAT_THEME='custom'
-
-if !isdirectory($HOME."/.config")
-    call mkdir($HOME."/.config", "", 0770)
-endif
-if !isdirectory($HOME."/.config/nvim")
-    call mkdir($HOME."/.config/nvim", "", 0770)
-endif
+" undo
 if !isdirectory($HOME."/.config/nvim/undodir")
-    call mkdir($HOME."/.config/nvim/undodir", "", 0700)
+    call mkdir($HOME."/.config/nvim/undodir", "p", 0770)
 endif
-
 set undodir=~/.config/nvim/undodir
 set undofile
 set undolevels=5000
@@ -68,16 +68,34 @@ set mouse=a                         " enable mouse
 set ttimeoutlen=1                   " time waited for terminal codes
 set signcolumn=number
 
-nnoremap <silent>t :noh<CR>
-nnoremap Q @q
-nnoremap <silent><leader>c :exec &cuc ? "set nocuc" : "set cuc"<CR>
+" Autocommands {{{1
+function RemoveAutoCommenting()
+    setlocal fo-=c fo-=r fo-=o
+endfunction
+autocmd FileType * call RemoveAutoCommenting()
 
-autocmd FileType * setlocal fo-=c fo-=r fo-=o  " remove autocommenting
+function RestoreCursorPosition()
+    if line("'\"") > 0 && line("'\"") <= line("$")
+        exe "normal g'\""
+    endif
+endfunction
+autocmd BufReadPost * call RestoreCursorPosition()
 
-" go to last position before exiting vim
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
+" Mappings {{{1
 
+" zero width space
 exe 'digraph zs ' . 0x200b
+
+nnoremap Q @q
+
+function ToggleCursorColumn()
+    if &cursorcolumn
+        set nocursorcolumn
+    else
+        set cursorcolumn
+    endif
+endfunction
+nnoremap <silent><leader>c :call ToggleCursorColumn()<CR>
 
 nnoremap <silent>t :noh<CR>
 nnoremap <silent><esc> :noh<CR>
@@ -91,10 +109,9 @@ map gl $
 nnoremap Y y$
 nnoremap Q @q
 
-" inoremap {<CR> {<cr>}<esc>O
 inoremap  <esc>A <esc>ciw {<CR>}<esc>O
 
-
+" VirtIdx() {{{1
 function! VirtIdx(string, idx)
     if len(a:string) == 0
         return ' '
@@ -114,17 +131,7 @@ function! VirtIdx(string, idx)
     return char
 endfunction
 
-function! FastJump()
-    while 1
-        let l:char = getcharstr()
-        if l:char == "\<esc>"
-            break
-        elseif l:char == "\<CR>"
-            break
-        endif
-    endwhile
-endfunction
-
+" Slide() {{{1
 function! Slide(direction, smart_syntax)
     let l:syntax = a:smart_syntax && exists("*synstack")
 
@@ -213,198 +220,147 @@ vnoremap <expr><leader>J Slide(1, 1)
 nnoremap <expr><leader>K Slide(-1, 1)
 vnoremap <expr><leader>K Slide(-1, 1)
 
+" GoParagraph() {{{1
+function! GoStartParagraph()
+    call cursor(0, 1)
+    let l:start_line = line('.')
+    let l:line = search("\\v(^\\s*\\n|%^)\\zs\\s*\\S+.*$", "Wb")
+    let l:diff = l:start_line - l:line
+    if l:diff > 0
+        return l:diff . 'k^'
+    endif
+    return ""
+endfunction
+
+function! GoEndParagraph()
+    let l:start_line = line('.')
+    let l:line = search("\\v\\s*\\S+.*\\ze(\\n\\s*$|%$)", "W")
+    let l:diff = l:line - l:start_line
+    if l:diff > 0
+        return l:diff . 'j^'
+    endif
+    return ""
+endfunction
+
+vnoremap <silent><expr><cr> GoEndParagraph()
+vnoremap <silent><expr>   GoStartParagraph()
+nnoremap <silent><expr><cr> GoEndParagraph()
+nnoremap <silent><expr>   GoStartParagraph()
+onoremap <silent><expr><cr> GoEndParagraph()
+onoremap <silent><expr>   GoStartParagraph()
+
+" Plugins {{{1
+call plug#begin()
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'ggandor/leap.nvim'
+Plug 'tpope/vim-abolish'
+Plug 'chaoren/vim-wordmotion'
+Plug 'machakann/vim-swap', { 'on': '<plug>(swap-interactive)' }
+Plug 'kevinhwang91/nvim-bqf', { 'for': 'qf' }
+Plug 'vim-scripts/ReplaceWithRegister',
+            \ {'on': [ '<Plug>ReplaceWithRegisterOperator',
+                     \ '<Plug>ReplaceWithRegisterLine',
+                     \ '<Plug>ReplaceWithRegisterVisual' ]}
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-entire'
+Plug 'kana/vim-textobj-line'
+Plug 'glts/vim-textobj-comment'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'junegunn/vim-easy-align', { 'on': '<Plug>(EasyAlign)' }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'uiiaoo/java-syntax.vim', { 'for': 'java' }
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+call plug#end()
+
+" Java Highlight Settings {{{1
+highlight link javaType NONE
+highlight link javaType NONE
+highlight link javaIdentifier NONE
+highlight link javaDelimiter NONE
+
+" Coc Settings {{{1
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ CheckBackspace() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Easy Align Settings {{{1
+xnoremap ga <plug>(EasyAlign)
+nnoremap ga <plug>(EasyAlign)
+
+" Swap Settings {{{1
+nmap gs <Plug>(swap-interactive)
+
+" Wordmotion Settings {{{1
+let g:wordmotion_prefix = "<space>"
+
+" Replace With Register Settings {{{1
+nmap gp  <Plug>ReplaceWithRegisterOperator
+nmap gpp <Plug>ReplaceWithRegisterLine
+xmap gp  <Plug>ReplaceWithRegisterVisual
+
+" Leap Settings {{{1
+nmap m <plug>(leap-forward)
+nmap M <plug>(leap-backward)
 lua << EOF
-require("packer").startup({
-    function(use)
-        use({
-            "wbthomason/packer.nvim",
-            "tpope/vim-repeat",
-            {
-                "tpope/vim-commentary",
-                keys = "gc",
-            },
-            {
-                "tpope/vim-surround",
-                keys = "ys"
-            },
-            {
-                 'ggandor/leap.nvim',
-                 keys = { "m", "M" },
-                 config = function()
-                     require('leap').setup {
-                         case_insensitive = true,
-                         safe_labels = {},
-                         labels = {
-                             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'i', 'k', 'l', 'm',
-                             'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-                             '1', '2', '3', '4', '5', '7', '8', '9', '0',
-                             ';', "'", ',', '.', '/', 
-                             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'I', 'K', 'L', 'M',
-                             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-                             ':', '"', '<', '>', '?', 
-                         }
-                     }
-                     vim.keymap.set('n', 'm', '<plug>(leap-forward)')
-                     vim.keymap.set('n', 'M', '<plug>(leap-backward)')
-                 end
-            },
-            {
-                'chaoren/vim-wordmotion',
-                setup = function()
-                    vim.g.wordmotion_prefix = "<space>"
-                end
-            },
-
-            {
-                "mfussenegger/nvim-jdtls",
-                event = "Filetype java",
-                config = function()
-                    local config = {
-                      cmd = {
-                          'jdtls',
-                          '-configuration', '/usr/local/opt/jdtls/libexec/config_mac',
-                          '-data', '/Users/jake/.cache/jdtls_workspace/'
-                      },
-                      root_dir = require('jdtls.setup').find_root({'mvnw', '.git', 'gradlew'}),
-                    }
-                    config['on_attach'] = function(client, bufnr)
-                        local opts = { noremap=true }
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-                        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-                    end
-                    vim.g.start_jdtls = function()
-                        require('jdtls').start_or_attach(config)
-                    end
-                    vim.cmd([[
-                        au Filetype java call g:start_jdtls()
-                    ]])
-                end
-            },
-
-            {
-                "machakann/vim-swap",
-                keys = "gs"
-            },
-
-            {
-                "kevinhwang91/nvim-bqf",
-                ft = "qf"
-            },
-            {
-                "vim-scripts/ReplaceWithRegister",
-                keys = "gr"
-            },
-            {
-                "kana/vim-textobj-entire",
-                requires = { "kana/vim-textobj-user" }
-            },
-            {
-                "kana/vim-textobj-line",
-                requires = { "kana/vim-textobj-user" }
-            },
-            {
-                "glts/vim-textobj-comment",
-                requires = { "kana/vim-textobj-user" }
-            },
-
-            --{
-            --  "neovim/nvim-lspconfig",
-            --  event = "FileType *.bruh",
-            --  config = function()
-            --      require('lspconfig').jdtls.setup {
-            --          cmd = {
-            --              'jdtls',
-            --              '-configuration', '/usr/local/opt/jdtls/libexec/config_mac',
-            --              '-data', '/Users/jake/.cache/jdtls_workspace/'
-            --          },
-            --          on_attach = on_attach,
-            --          flags = {
-            --              -- This will be the default in neovim 0.7+
-            --              debounce_text_changes = 150,
-            --          }
-            --      }
-            --  end
-            --},
-
-            {
-                "junegunn/vim-easy-align",
-                keys = {"ga"},
-                config = function()
-                    vim.keymap.set('x', 'ga', '<plug>(EasyAlign)')
-                    vim.keymap.set('n', 'ga', '<plug>(EasyAlign)')
-                end
-            },
-            {
-                'junegunn/fzf',
-                keys = "<C-f>",
-                run = function()
-                    vim.cmd([[
-                        fzf#install()
-                    ]])
-                end
-            },
-            {
-                "junegunn/fzf.vim",
-                after = 'fzf',
-                config = function()
-                    vim.cmd([[
-                        command! -bang -nargs=* -complete=dir Files
-                            \ call fzf#vim#files(<q-args>, {'options': [
-                                \ '--delimiter', '/',
-                                \ '--with-nth', '-2..',
-                                \ '--preview',
-                                \ '~/.vim/plugged/fzf.vim/bin/preview.sh {}'
-                            \ ]}, <bang>0)
-                    ]])
-                    vim.keymap.set('n', '<C-f>', ':Files<CR>')
-                end,
-            },
-            {
-                "ms-jpq/coq_nvim",
-                event = "Filetype java",
-                setup = function()
-                    vim.cmd([[
-                        let g:coq_settings = { 'display.pum.fast_close': v:false }
-                    ]])
-                end,
-                config = function()
-                    vim.cmd([[
-                        COQnow [--shut-up]
-                    ]])
-                end
-            },
-            {
-                "nvim-treesitter/nvim-treesitter",
-                event = "Filetype java",
-                run = function()
-                    vim.cmd([[TSUpdate]])
-                end,
-                config = function()
-                    require'nvim-treesitter.configs'.setup {
-                        ensure_installed = { "java", "cpp", "python" },
-                        sync_install = false,
-                        ignore_install = { },
-                        highlight = {
-                            enable = true,
-                            disable = { },
-                            additional_vim_regex_highlighting = false,
-                        },
-                    }
-                end
-            },
-        })
-    end,
-})
-
+    require('leap').setup {
+         case_insensitive = true,
+         safe_labels = {},
+         labels = {
+             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'i', 'k', 'l', 'm',
+             'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+             '1', '2', '3', '4', '5', '7', '8', '9', '0',
+             ';', "'", ',', '.', '/', 
+             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'I', 'K', 'L', 'M',
+             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+             ':', '"', '<', '>', '?', 
+         }
+    }
 EOF
+
+" BQF Settings {{{1
+let $BAT_THEME='custom'
+
+" FZF Settings {{{1
+command! -bang -nargs=* -complete=dir Files
+    \ call fzf#vim#files(<q-args>, {'options': [
+        \ '--delimiter', '/',
+        \ '--with-nth', '-2..',
+        \ '--preview',
+        \ '~/.vim/plugged/fzf.vim/bin/preview.sh {}'
+    \ ]}, <bang>0)
+nnoremap <C-f> :Files<CR>
+
+" vim: foldmethod=marker

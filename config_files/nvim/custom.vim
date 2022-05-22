@@ -175,6 +175,10 @@ hi default link BqfPreviewRange IncSearch
 
 let g:fzf_colors = { 'border':  ['fg', 'Border'] }
 
+call HL("LeapMatch",          "NONE", s:background, "NONE")
+call HL("LeapLabelPrimary",   "NONE", s:statusline_fill, "NONE")
+call HL("LeapLabelSecondary", "NONE", s:background, "NONE")
+call HL("LeapBackdrop",       "NONE", s:background, "NONE")
 
 sign define DiagnosticSignError text=
 sign define DiagnosticSignWarn  text=

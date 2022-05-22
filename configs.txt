@@ -4,46 +4,10 @@ config_files/home/inputrc    $HOME/.inputrc
 config_files/home/dir_colors $HOME/.dir_colors
 config_files/home/zshrc      $HOME/.zshrc
 
-# fish
-config_files/fish/config.fish   $HOME/.config/fish/config.fish
-config_files/fish/smart_join.py $HOME/.config/fish/smart_join.py
-
 # nvim
 config_files/nvim/init.vim       $HOME/.config/nvim/init.vim
 config_files/nvim/custom.vim     $HOME/.config/nvim/colors/custom.vim
-config_files/nvim/packer.nvim    $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
-
-# vim
-config_files/vim/vimrc                            $HOME/.vim/vimrc
-config_files/vim/custom.vim                       $HOME/.vim/colors/custom.vim
-config_files/vim/vimpagerrc                       $HOME/.vim/vimpagerrc
-config_files/vim/autoload/plug.vim                $HOME/.vim/autoload/plug.vim
-config_files/vim/after/ftplugin/c.vim             $HOME/.vim/after/ftplugin/c.vim
-
-# vim plugin configurations
-config_files/vim/plugin_config/coc.vim            $HOME/.vim/plugin_config/coc.vim
-config_files/vim/plugin_config/easyalign.vim      $HOME/.vim/plugin_config/easyalign.vim
-config_files/vim/plugin_config/enhanced_jumps.vim $HOME/.vim/plugin_config/enhanced_jumps.vim
-config_files/vim/plugin_config/fzf.vim            $HOME/.vim/plugin_config/fzf.vim
-config_files/vim/plugin_config/sandwich.vim       $HOME/.vim/plugin_config/sandwich.vim
-config_files/vim/plugin_config/targets.vim        $HOME/.vim/plugin_config/targets.vim
-config_files/vim/plugin_config/wordmotion.vim     $HOME/.vim/plugin_config/wordmotion.vim
-
-# vim functions
-config_files/vim/functions/bettersneak.vim              $HOME/.vim/functions/bettersneak.vim
-config_files/vim/functions/fcd.vim                      $HOME/.vim/functions/fcd.vim
-config_files/vim/functions/paragraphjump.vim            $HOME/.vim/functions/paragraphjump.vim
-config_files/vim/functions/plugin_config-wordmotion.vim $HOME/.vim/functions/plugin_config-wordmotion.vim
-config_files/vim/functions/sectionjump.vim              $HOME/.vim/functions/sectionjump.vim
-config_files/vim/functions/slide.vim                    $HOME/.vim/functions/slide.vim
-config_files/vim/functions/smartquit.vim                $HOME/.vim/functions/smartquit.vim
-config_files/vim/functions/synstack.vim                 $HOME/.vim/functions/synstack.vim
-config_files/vim/functions/tabline.vim                  $HOME/.vim/functions/tabline.vim
-config_files/vim/functions/visualonlyshowcmd.vim        $HOME/.vim/functions/visualonlyshowcmd.vim
-
-# tmux
-config_files/tmux/tmux.conf     $HOME/.tmux.conf
-config_files/tmux/statusline.sh $HOME/.config/tmux/statusline.sh
+config_files/nvim/plug.vim       $HOME/.local/share/nvim/site/autoload/plug.vim
 
 # kitty
 config_files/kitty/kitty.conf $HOME/.config/kitty/kitty.conf

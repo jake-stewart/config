@@ -11,6 +11,9 @@ let mapleader=" "
 set title
 set titlestring=%t%(\ %M%)%(\ %a%)
 
+" set rulerformat=%17(%c%V\ %p%%%)
+set rulerformat=%l,%c%V%=%P
+
 " colorscheme
 set background=dark
 set termguicolors
@@ -22,7 +25,7 @@ set showmatch
 set guioptions=c!  " remove gvim widgets
 set noshowmode     " hide --INSERT--
 set laststatus=0   " hide statusbar
-set ruler
+set noruler
 set number
 set cursorline
 set belloff=all    " disable sound
@@ -88,6 +91,8 @@ exe 'digraph zs ' . 0x200b
 
 nnoremap Q @q
 
+nnoremap <c-t> :tabnew<CR>
+
 function ToggleCursorColumn()
     if &cursorcolumn
         set nocursorcolumn
@@ -97,19 +102,48 @@ function ToggleCursorColumn()
 endfunction
 nnoremap <silent><leader>c :call ToggleCursorColumn()<CR>
 
-nnoremap <silent>t :noh<CR>
 nnoremap <silent><esc> :noh<CR>
 
-nnoremap <c-d> 10jzz
-nnoremap <c-u> 10kzz
+nnoremap $ <NOP>
+nnoremap ^ <NOP>
+nnoremap 0w $
 
-map gh ^
-map gl $
+nnoremap <m-l> gt
+nnoremap <m-h> gT
+nnoremap <silent><m-L> :tabm +1<CR>
+nnoremap <silent><m-H> :tabm -1<CR>
+
+tnoremap <m-l> <c-\><c-n>gt
+tnoremap <m-h> <c-\><c-n>gT
+tnoremap <silent><m-L> <c-\><c-n>:tabm +1<CR>a
+tnoremap <silent><m-H> <c-\><c-n>:tabm -1<CR>a
+
+nnoremap <c-w><c-m> <c-w>j
+
+nnoremap <c-l> <c-w><c-w>
+tnoremap <c-l> <c-\><c-n><c-w><c-w>
+
+tmap <c-w> <c-\><c-n><c-w>
+
+noremap gh ^
+noremap gl $
 
 nnoremap Y y$
 nnoremap Q @q
 
 inoremap  <esc>A <esc>ciw {<CR>}<esc>O
+
+let g:splitjoin_r_indent_align_args = 0
+let g:splitjoin_python_brackets_on_separate_lines = 1
+let g:splitjoin_html_attributes_hanging = 1
+
+" Terminal {{{
+augroup TERMINAL_OPTIONS
+  autocmd!
+  autocmd TermOpen  * startinsert | setlocal nonu
+  autocmd TermEnter * startinsert
+  autocmd BufWinEnter,WinEnter term://* startinsert
+augroup END
 
 " VirtIdx() {{{1
 function! VirtIdx(string, idx)
@@ -220,43 +254,17 @@ vnoremap <expr><leader>J Slide(1, 1)
 nnoremap <expr><leader>K Slide(-1, 1)
 vnoremap <expr><leader>K Slide(-1, 1)
 
-" GoParagraph() {{{1
-function! GoStartParagraph()
-    call cursor(0, 1)
-    let l:start_line = line('.')
-    let l:line = search("\\v(^\\s*\\n|%^)\\zs\\s*\\S+.*$", "Wb")
-    let l:diff = l:start_line - l:line
-    if l:diff > 0
-        return l:diff . 'k^'
-    endif
-    return ""
-endfunction
-
-function! GoEndParagraph()
-    let l:start_line = line('.')
-    let l:line = search("\\v\\s*\\S+.*\\ze(\\n\\s*$|%$)", "W")
-    let l:diff = l:line - l:start_line
-    if l:diff > 0
-        return l:diff . 'j^'
-    endif
-    return ""
-endfunction
-
-vnoremap <silent><expr><cr> GoEndParagraph()
-vnoremap <silent><expr>   GoStartParagraph()
-nnoremap <silent><expr><cr> GoEndParagraph()
-nnoremap <silent><expr>   GoStartParagraph()
-onoremap <silent><expr><cr> GoEndParagraph()
-onoremap <silent><expr>   GoStartParagraph()
 
 " Plugins {{{1
 call plug#begin()
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
+Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'tpope/vim-commentary'
 Plug 'ggandor/leap.nvim'
 Plug 'tpope/vim-abolish'
 Plug 'chaoren/vim-wordmotion'
+Plug 'AndrewRadev/splitjoin.vim'
 Plug 'machakann/vim-swap', { 'on': '<plug>(swap-interactive)' }
 Plug 'kevinhwang91/nvim-bqf', { 'for': 'qf' }
 Plug 'vim-scripts/ReplaceWithRegister',
@@ -361,6 +369,48 @@ command! -bang -nargs=* -complete=dir Files
         \ '--preview',
         \ '~/.vim/plugged/fzf.vim/bin/preview.sh {}'
     \ ]}, <bang>0)
-nnoremap <C-f> :Files<CR>
+
+" jfind {{{1
+
+function! OnJFindExit(window, status)
+    call nvim_win_close(a:window, 0)
+    if a:status == 0
+        try
+            let l:contents = readfile($HOME . "/.cache/fcd_dest")
+            exe 'edit ' . l:contents[0]
+        catch
+            return
+        endtry
+    endif
+endfunction
+
+function! JFind()
+    let width = float2nr(&columns * 0.9)
+    let height = float2nr(&lines * 0.7)
+    " let width = float2nr(winwidth(0) * 0.9)
+    " let height = float2nr(winheight(0) * 0.7)
+
+    let buf = nvim_create_buf(v:false, v:true)
+
+    let ui = nvim_list_uis()[0]
+    let opts = {'relative': 'editor',
+                \ 'width': width,
+                \ 'height': height,
+                \ 'col': (ui.width/2) - (width/2),
+                \ 'row': (ui.height/2) - (height/2),
+                \ 'anchor': 'NW',
+                \ 'style': 'minimal',
+                \ 'border': 'rounded',
+                \ }
+    let win = nvim_open_win(buf, 1, opts)
+
+    call nvim_win_set_option(win, 'winhl', 'Normal:Normal')
+    
+    let t = termopen('fcd --project="' . getcwd() . '"',
+                \ {'on_exit': {status, data -> OnJFindExit(win, data)}})
+endfunction
+
+
+nnoremap <silent><C-f> :call JFind()<CR>
 
 " vim: foldmethod=marker

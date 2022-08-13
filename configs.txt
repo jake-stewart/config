@@ -3,6 +3,7 @@ config_files/home/bashrc     $HOME/.bashrc
 config_files/home/inputrc    $HOME/.inputrc
 config_files/home/dir_colors $HOME/.dir_colors
 config_files/home/zshrc      $HOME/.zshrc
+config_files/home/tmux.conf  $HOME/.tmux.conf
 
 # nvim
 config_files/nvim/init.vim       $HOME/.config/nvim/init.vim

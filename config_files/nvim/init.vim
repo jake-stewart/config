@@ -1,81 +1,78 @@
-"  _       _ _               _           
-" (_)_ __ (_) |_      __   _(_)_ __ ___  
-" | | '_ \| | __|     \ \ / / | '_ ` _ \ 
-" | | | | | | |_   _   \ V /| | | | | | |
-" |_|_| |_|_|\__| (_)   \_/ |_|_| |_| |_|
+"
+"  _   _                 _           
+" | \ | | ___  _____   _(_)_ __ ___  
+" |  \| |/ _ \/ _ \ \ / / | '_ ` _ \ 
+" | |\  |  __/ (_) \ V /| | | | | | |
+" |_| \_|\___|\___/ \_/ |_|_| |_| |_|
+"
 
-" Settings {{{1
+" SETTINGS {{{1
+
 let mapleader=" "
 
-" title
-set title
-set titlestring=%t%(\ %M%)%(\ %a%)
-
-" set rulerformat=%17(%c%V\ %p%%%)
-set rulerformat=%l,%c%V%=%P
-
-" colorscheme
-set background=dark
-set termguicolors
-syntax on
-colorscheme custom
-
-set shortmess+=I   " remove start page
-set showmatch
-set guioptions=c!  " remove gvim widgets
-set noshowmode     " hide --INSERT--
-set laststatus=0   " hide statusbar
-set noruler
-set number
-set cursorline
-set belloff=all    " disable sound
-set showmatch
-set nojoinspaces   " stop double space when joining sentences
-
-set noswapfile
-set updatetime=300
-
-" splits
-set splitright
-set splitbelow
-
-" whitespace
-set tabstop=8
-set expandtab
-set softtabstop=4
-set shiftwidth=4
-set smarttab
-
-" undo
-if !isdirectory($HOME."/.config/nvim/undodir")
-    call mkdir($HOME."/.config/nvim/undodir", "p", 0770)
-endif
-set undodir=~/.config/nvim/undodir
-set undofile
-set undolevels=5000
-
-" searching
-set hlsearch
-set incsearch
-set smartcase
-set ignorecase
-
-" other
+set termguicolors                   " enable truecolor
 set foldmethod=marker               " use {{{ and }}} for folding
 set lazyredraw                      " run macros without updating screen
 set clipboard^=unnamed,unnamedplus  " make vim use system clipboard
 set encoding=utf-8                  " unicode characters
 set hidden                          " allow buffer switching without saving
 set backspace=indent,eol,start      " make backspace work as expected
-set mouse=a                         " enable mouse
 set ttimeoutlen=1                   " time waited for terminal codes
-set signcolumn=number
+set shortmess+=I                    " remove start page
+set showmatch                       " show matching brackets
+set guioptions=c!                   " remove gvim widgets
+set noshowmode                      " hide --insert--
+set laststatus=0                    " hide statusbar
+set cursorline                      " highlight current line
+set belloff=all                     " disable sound
+set nojoinspaces                    " stop double space when joining sentences
+set noswapfile                      " disable the .swp files vim creates
+set updatetime=300                  " quicker cursorhold events
+set title                           " set window title according to titlestring
+set titlestring=%t%(\ %M%)          " title, modified
+set splitright                      " open horizontal splits to the right
+set splitbelow                      " open vertical splits below
+set mouse=a                         " enable mouse
+set mousemodel=extend               " remove right click menu
+set noruler                         " hide commandline ruler
+set rulerformat=%l,%c%v%=%p         " same syntax as statusline
+set number                          " show number column
+set signcolumn=number               " both sign and number in number column
+set hlsearch                        " highlight search matches
+set incsearch                       " show matches while typing
+set ignorecase                      " case insensitive search
+set smartcase                       " match case when query contains uppercase
+set tabstop=8                       " tabs are 8 characters wide
+set expandtab                       " expand tabs into spaces
+set shiftwidth=4                    " num spaces for tab at start of line
+set softtabstop=1                   " num spaces for tab within a line
+set smarttab                        " differentiate shiftwidth and softtabstop
 
-" Autocommands {{{1
+" }}}
+" COLORSCHEME {{{
+
+set background=dark
+syntax on
+colorscheme custom
+
+" }}}
+" UNDO HISTORY {{{
+
+set undofile                        " keep track of undo after quitting vim
+set undodir=~/.config/nvim/undodir  " store undo history in nvim config
+set undolevels=5000                 " increase undo history
+
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), "p", 0770)
+endif
+
+" }}}
+" AUTOCOMMANDS {{{
+
 function RemoveAutoCommenting()
     setlocal fo-=c fo-=r fo-=o
 endfunction
-autocmd FileType * call RemoveAutoCommenting()
+autocmd filetype * call RemoveAutoCommenting()
 
 function RestoreCursorPosition()
     if line("'\"") > 0 && line("'\"") <= line("$")
@@ -84,68 +81,42 @@ function RestoreCursorPosition()
 endfunction
 autocmd BufReadPost * call RestoreCursorPosition()
 
-" Mappings {{{1
+" }}}
+" MAPPINGS {{{1
 
-" zero width space
+" zero width space digraph
 exe 'digraph zs ' . 0x200b
 
-nnoremap Q @q
+" toggle cursor column
+nnoremap <silent><leader>c :let &cuc = !&cuc<cr>
 
-nnoremap <c-t> :tabnew<CR>
+" toggle color column
+nnoremap <silent><leader>8 :let &cc = &cc == 0 ? 80 : 0<cr>
 
-function ToggleCursorColumn()
-    if &cursorcolumn
-        set nocursorcolumn
-    else
-        set cursorcolumn
-    endif
-endfunction
-nnoremap <silent><leader>c :call ToggleCursorColumn()<CR>
+" automatically create open and close brace
+inoremap <c-b> <esc>a <esc>ciw {<cr>}<esc>o
 
-nnoremap <silent><esc> :noh<CR>
+" visually select pasted content
+nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
 
-nnoremap $ <NOP>
-nnoremap ^ <NOP>
-nnoremap 0w $
+" swap indent with line below
+nnoremap <silent><space>s ^dj^v$hpk$p
 
-nnoremap <m-l> gt
-nnoremap <m-h> gT
-nnoremap <silent><m-L> :tabm +1<CR>
-nnoremap <silent><m-H> :tabm -1<CR>
+" clear search highlight
+nnoremap <silent><esc> :noh<cr>
 
-tnoremap <m-l> <c-\><c-n>gt
-tnoremap <m-h> <c-\><c-n>gT
-tnoremap <silent><m-L> <c-\><c-n>:tabm +1<CR>a
-tnoremap <silent><m-H> <c-\><c-n>:tabm -1<CR>a
-
-nnoremap <c-w><c-m> <c-w>j
-
-nnoremap <c-l> <c-w><c-w>
-tnoremap <c-l> <c-\><c-n><c-w><c-w>
-
-tmap <c-w> <c-\><c-n><c-w>
-
+" go to start and end of line
 noremap gh ^
 noremap gl $
 
+" make Y act like D and C
 nnoremap Y y$
+
+" easily replace macro with q
 nnoremap Q @q
 
-inoremap  <esc>A <esc>ciw {<CR>}<esc>O
-
-let g:splitjoin_r_indent_align_args = 0
-let g:splitjoin_python_brackets_on_separate_lines = 1
-let g:splitjoin_html_attributes_hanging = 1
-
-" Terminal {{{
-augroup TERMINAL_OPTIONS
-  autocmd!
-  autocmd TermOpen  * startinsert | setlocal nonu
-  autocmd TermEnter * startinsert
-  autocmd BufWinEnter,WinEnter term://* startinsert
-augroup END
-
-" VirtIdx() {{{1
+" }}}
+" VIRTIDX {{{
 function! VirtIdx(string, idx)
     if len(a:string) == 0
         return ' '
@@ -165,7 +136,9 @@ function! VirtIdx(string, idx)
     return char
 endfunction
 
-" Slide() {{{1
+" }}}
+" SLIDE {{{
+
 function! Slide(direction, smart_syntax)
     let l:syntax = a:smart_syntax && exists("*synstack")
 
@@ -179,11 +152,15 @@ function! Slide(direction, smart_syntax)
 
     if l:col > 1
         let l:char_before = VirtIdx(getline(l:line), l:col - 1)
-        let l:space_before = (l:char_before == ' ' || l:char_before == '' || l:char_before == '	')
+        let l:space_before = (l:char_before == ' '
+                    \ || l:char_before == ''
+                    \ || l:char_before == "\t")
     endif
 
     let l:char_after = VirtIdx(getline(l:line), l:col)
-    let l:space_after = l:char_after == ' ' || l:char_after == '' || l:char_after == '	'
+    let l:space_after = (l:char_after == ' '
+                \ || l:char_after == ''
+                \ || l:char_after == "\t")
 
     while 1
         let l:line += a:direction
@@ -213,14 +190,18 @@ function! Slide(direction, smart_syntax)
         endif
 
         let l:char_after = VirtIdx(getline(l:line), l:col)
-        let l:new_space_after = l:char_after == ' ' || l:char_after == '' || l:char_after == '	'
+        let l:new_space_after = (l:char_after == ' '
+                    \ || l:char_after == ''
+                    \ || l:char_after == "\t")
         if l:new_space_after != l:space_after
             break
         endif
 
         if l:col > 1
             let l:char_before = VirtIdx(getline(l:line), l:col - 1)
-            let l:new_space_before = (l:char_before == ' ' || l:char_before == '' || l:char_before == '	')
+            let l:new_space_before = (l:char_before == ' '
+                        \ || l:char_before == ''
+                        \ || l:char_before == "\t")
             if l:new_space_before != l:space_before
                 break
             endif
@@ -249,52 +230,57 @@ vnoremap <expr><leader>j Slide(1, 0)
 nnoremap <expr><leader>k Slide(-1, 0)
 vnoremap <expr><leader>k Slide(-1, 0)
 
-nnoremap <expr><leader>J Slide(1, 1)
-vnoremap <expr><leader>J Slide(1, 1)
-nnoremap <expr><leader>K Slide(-1, 1)
-vnoremap <expr><leader>K Slide(-1, 1)
+nnoremap <expr><leader>j Slide(1, 1)
+vnoremap <expr><leader>j Slide(1, 1)
+nnoremap <expr><leader>k Slide(-1, 1)
+vnoremap <expr><leader>k Slide(-1, 1)
 
+" }}}
+" PLUGINS {{{
 
-" Plugins {{{1
 call plug#begin()
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-surround'
-Plug 'Vimjas/vim-python-pep8-indent'
+Plug 'kylechui/nvim-surround'
+Plug 'vimjas/vim-python-pep8-indent'
+Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-commentary'
-Plug 'ggandor/leap.nvim'
+Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-abolish'
 Plug 'chaoren/vim-wordmotion'
-Plug 'AndrewRadev/splitjoin.vim'
+Plug 'andrewradev/splitjoin.vim'
 Plug 'machakann/vim-swap', { 'on': '<plug>(swap-interactive)' }
 Plug 'kevinhwang91/nvim-bqf', { 'for': 'qf' }
-Plug 'vim-scripts/ReplaceWithRegister',
-            \ {'on': [ '<Plug>ReplaceWithRegisterOperator',
-                     \ '<Plug>ReplaceWithRegisterLine',
-                     \ '<Plug>ReplaceWithRegisterVisual' ]}
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-entire'
 Plug 'kana/vim-textobj-line'
 Plug 'glts/vim-textobj-comment'
 Plug 'michaeljsmith/vim-indent-object'
-Plug 'junegunn/vim-easy-align', { 'on': '<Plug>(EasyAlign)' }
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+Plug 'junegunn/vim-easy-align', { 'on': '<plug>(EasyAlign)' }
 Plug 'uiiaoo/java-syntax.vim', { 'for': 'java' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#end()
 
-" Java Highlight Settings {{{1
-highlight link javaType NONE
-highlight link javaType NONE
-highlight link javaIdentifier NONE
-highlight link javaDelimiter NONE
+" }}}
+" NETRW SETTINGS {{{
 
-" Coc Settings {{{1
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nnoremap <silent> K :call ShowDocumentation()<CR>
+let g:netrw_banner=0
+
+" }}}
+" JAVA HIGHLIGHT SETTINGS {{{
+
+highlight link javatype none
+highlight link javatype none
+highlight link javaidentifier none
+highlight link javadelimiter none
+
+" }}}
+" COC SETTINGS {{{
+
+nmap <silent> gd <plug>(coc-definition)
+nmap <silent> gy <plug>(coc-type-definition)
+nmap <silent> gi <plug>(coc-implementation)
+nmap <silent> gr <plug>(coc-references)
+nnoremap <silent> K :call ShowDocumentation()<cr>
 
 function! ShowDocumentation()
   if CocAction('hasProvider', 'hover')
@@ -304,79 +290,66 @@ function! ShowDocumentation()
   endif
 endfunction
 
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ CheckBackspace() ? "\<TAB>" :
+inoremap <silent><expr> <tab>
+      \ pumvisible() ? "\<c-n>" :
+      \ CheckBackspace() ? "\<tab>" :
       \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\<c-h>"
 
 function! CheckBackspace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
+inoremap <silent><expr> <c-j>
+            \ coc#refresh() . CocActionAsync('showSignatureHelp')
 
-" Easy Align Settings {{{1
+inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<cr>"
+
+xmap if <plug>(coc-funcobj-i)
+omap if <plug>(coc-funcobj-i)
+xmap af <plug>(coc-funcobj-a)
+omap af <plug>(coc-funcobj-a)
+xmap ic <plug>(coc-classobj-i)
+omap ic <plug>(coc-classobj-i)
+xmap ac <plug>(coc-classobj-a)
+omap ac <plug>(coc-classobj-a)
+
+" }}}
+" EASY ALIGN SETTINGS {{{
+
 xnoremap ga <plug>(EasyAlign)
 nnoremap ga <plug>(EasyAlign)
 
-" Swap Settings {{{1
-nmap gs <Plug>(swap-interactive)
+" }}}
+" SURROUND SETTINGS {{{
 
-" Wordmotion Settings {{{1
+lua require("nvim-surround").setup()
+
+" }}}
+" SWAP SETTINGS {{{
+
+nmap gs <plug>(swap-interactive)
+
+" }}}
+" WORDMOTION SETTINGS {{{
+
 let g:wordmotion_prefix = "<space>"
 
-" Replace With Register Settings {{{1
-nmap gp  <Plug>ReplaceWithRegisterOperator
-nmap gpp <Plug>ReplaceWithRegisterLine
-xmap gp  <Plug>ReplaceWithRegisterVisual
+" }}}
+" SPLITJOIN SETTINGS {{{
 
-" Leap Settings {{{1
-nmap m <plug>(leap-forward)
-nmap M <plug>(leap-backward)
-lua << EOF
-    require('leap').setup {
-         case_insensitive = true,
-         safe_labels = {},
-         labels = {
-             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'i', 'k', 'l', 'm',
-             'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-             '1', '2', '3', '4', '5', '7', '8', '9', '0',
-             ';', "'", ',', '.', '/', 
-             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'I', 'K', 'L', 'M',
-             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-             ':', '"', '<', '>', '?', 
-         }
-    }
-EOF
+let g:splitjoin_r_indent_align_args = 0
+let g:splitjoin_python_brackets_on_separate_lines = 1
+let g:splitjoin_html_attributes_hanging = 1
 
-" BQF Settings {{{1
-let $BAT_THEME='custom'
-
-" FZF Settings {{{1
-command! -bang -nargs=* -complete=dir Files
-    \ call fzf#vim#files(<q-args>, {'options': [
-        \ '--delimiter', '/',
-        \ '--with-nth', '-2..',
-        \ '--preview',
-        \ '~/.vim/plugged/fzf.vim/bin/preview.sh {}'
-    \ ]}, <bang>0)
-
-" jfind {{{1
-
+"}}}
+" JFIND {{{
 function! OnJFindExit(window, status)
     call nvim_win_close(a:window, 0)
     if a:status == 0
         try
-            let l:contents = readfile($HOME . "/.cache/fcd_dest")
+            let l:contents = readfile($HOME . "/.cache/jfind_out")
             exe 'edit ' . l:contents[0]
         catch
             return
@@ -385,10 +358,13 @@ function! OnJFindExit(window, status)
 endfunction
 
 function! JFind()
+    let project = system('~/.config/jfind/jfind-match-project.sh')
+    if project == ""
+        echo "Unknown project: " . getcwd()
+        return
+    endif
     let width = float2nr(&columns * 0.9)
     let height = float2nr(&lines * 0.7)
-    " let width = float2nr(winwidth(0) * 0.9)
-    " let height = float2nr(winheight(0) * 0.7)
 
     let buf = nvim_create_buf(v:false, v:true)
 
@@ -398,19 +374,35 @@ function! JFind()
                 \ 'height': height,
                 \ 'col': (ui.width/2) - (width/2),
                 \ 'row': (ui.height/2) - (height/2),
-                \ 'anchor': 'NW',
+                \ 'anchor': 'nw',
                 \ 'style': 'minimal',
                 \ 'border': 'rounded',
                 \ }
-    let win = nvim_open_win(buf, 1, opts)
 
-    call nvim_win_set_option(win, 'winhl', 'Normal:Normal')
-    
-    let t = termopen('fcd --project="' . getcwd() . '"',
+    let win = nvim_open_win(buf, 1, opts)
+    call nvim_win_set_option(win, 'winhl', 'normal:normal')
+    let t = termopen('~/.config/jfind/jfind-project.sh',
                 \ {'on_exit': {status, data -> OnJFindExit(win, data)}})
+    startinsert
 endfunction
 
+nnoremap <silent><c-f> :call JFind()<cr>
 
-nnoremap <silent><C-f> :call JFind()<CR>
+" }}}
+" FORCE GO FILE {{{
+
+function! ForceGoFile(fname)
+    let l:path=expand('%:p:h') .'/'. expand(a:fname)
+    if filereadable(l:path)
+       norm gf
+    else
+        silent! execute "!touch ". expand(l:path)
+        norm gf
+    endif
+endfunction
+
+noremap <silent><leader>gf :call ForceGoFile(expand("<cfile>"))<cr>
+
+" }}}
 
 " vim: foldmethod=marker

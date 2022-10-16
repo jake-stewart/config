@@ -1,34 +1,56 @@
-# vi emulation
-KEYTIMEOUT=1
-bindkey -v
+#
+#  _____    _     
+# |__  /___| |__  
+#   / // __| '_ \ 
+#  / /_\__ \ | | |
+# /____|___/_| |_|
+#
 
-alias q=exit
-alias vi=nvim
-alias vim=nvim
+# COMPATABILITY {{{
 
-alias netcli=/Applications/NetLinkz/peer/netcli
-
-export HOMEBREW_NO_EMOJI=1
 export COLORTERM="truecolor"
+KEYTIMEOUT=1
 
+# }}}
+# ZSH SETTINGS {{{
 
-export FZF_DEFAULT_COMMAND="fd -E '*.iml' --exclude={.git,.idea,.vscode,.sass-cache,.class,__pycache__,node_modules,target,build,tmp} --type f"
+# allow comments in prompt
+setopt INTERACTIVE_COMMENTS
 
+# history
+setopt HIST_IGNORE_SPACE
+export HISTSIZE=1000000000
+export SAVEHIST=$HISTSIZE
+
+# }}}
+# PROGRAM CONFIGS {{{
+
+# react
 export NODE_OPTIONS="--openssl-legacy-provider"
 
-# export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-14.0.2.jdk/Contents/Home/"
-export JAVA_HOME="/Users/jake/Library/Java/JavaVirtualMachines/openjdk-17.0.2/Contents/Home/"
+# homebrew
+export HOMEBREW_NO_EMOJI=1
+
+# java
+JAVA_VMS="$HOME/Library/Java/JavaVirtualMachines"
+export JAVA_HOME="$JAVA_VMS/openjdk-17.0.2/Contents/Home/"
 export JDTLS_HOME="/usr/local/Cellar/jdtls/1.11.0/libexec"
 
-whatis() {
-    [[ $? -eq 1 ]] && echo "Usage: whatis {command}" && exit 1;
-    for arg in $@; do
-        man -P cat $arg \
-            | awk 'name==1{print $0; exit} /N.*A.*M.*E[^A-Za-z]*$/{name=1}' \
-            | sed 's/^[ \t]*//g'
-    done
-}
+# fnm
+eval "$(fnm env --use-on-cd)"
+
+# time
+[ `uname` = Darwin ] && MAX_MEMORY_UNITS=KB || MAX_MEMORY_UNITS=MB
+TIMEFMT=$'\n'"%J  %U user %*Es total %P cpu %M $MAX_MEMORY_UNITS mem"
+
+# }}}
+# VI MODE {{{
+
+# use vi bindings
+bindkey -v
+
 # Change cursor shape for different vi modes.
+zle -N zle-keymap-select
 function zle-keymap-select() {
     if [[ ${KEYMAP} == vicmd ]] ||
         [[ $1 = 'block' ]]; then
@@ -42,27 +64,51 @@ function zle-keymap-select() {
         echo -ne '\e[5 q'
     fi
 }
-zle -N zle-keymap-select
-zle-line-init() {
-    # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
-    zle -K viins
-    echo -ne "\e[5 q"
-}
-zle -N zle-line-init
-echo -ne '\e[5 q' # Use beam shape cursor on startup.
-preexec() { echo -ne '\e[1 q' ;} # Use block shape cursor for each new prompt.
 
+# start prompt in insert mode
+zle -N zle-line-init
+zle-line-init() {
+    zle -K viins
+}
+
+# Use beam shape cursor on startup
+echo -ne '\e[5 q'
+
+# use block shape cursor in programs
+preexec() {
+    echo -ne '\e[1 q'
+}
+
+# }}}
+# KEYBINDINGS {{{
+
+# allow backspace past insert start
 bindkey "^?" backward-delete-char
 
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+# move cursor to start/end of line with gh/gl
+bindkey -M vicmd gh beginning-of-line
+bindkey -M vicmd gl end-of-line
 
-bindkey '^K' autosuggest-accept
-# bindkey '^[[Z' autosuggest-accept  # shift + tab  | autosuggest
+# make : act like opening commandline mode
+commandline_mode() {
+    zle kill-buffer;
+    zle vi-insert;
+}
+zle -N commandline_mode
+bindkey -M vicmd : commandline_mode
 
+# bind <ctrl-f> to jfind a source
+bindkey -s '' 'jfind_source'
+
+# }}}
+# PLUGINS {{{
 
 source "$HOME/.config/zsh/zsh-system-clipboard/zsh-system-clipboard.zsh"
 source "$HOME/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 source "$HOME/.config/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+# }}}
+# ZSH SYNTAX HIGHLIGHTING SETTINGS {{{
 
 ZSH_HIGHLIGHT_STYLES[comment]='fg=red'
 ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=green'
@@ -79,16 +125,18 @@ ZSH_HIGHLIGHT_STYLES[arg0]='none'
 ZSH_HIGHLIGHT_STYLES[path]='none'
 ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red'
 ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=magenta'
-# ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=cyan'
-# ZSH_HIGHLIGHT_STYLES[suffix-aliases]='fg=cyan'
-# ZSH_HIGHLIGHT_STYLES[global-aliases]='fg=cyan'
 
-# ZSH_HIGHLIGHT_STYLES[default]='fg=yellow'
+# }}}
+# ZSH AUTOSUGGESTIONS SETTINGS {{{
 
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=()
+ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=()
 
-export EDITOR=nvim
-export PAGER=nvimpager
-setopt INTERACTIVE_COMMENTS
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+bindkey '^K' autosuggest-accept
+
+# }}}
+# PATH {{{
 
 # add ~/.bin to path
 [[ -d $HOME/.bin ]] && \
@@ -100,83 +148,30 @@ setopt INTERACTIVE_COMMENTS
 [[ -d $HOME/.cargo/bin ]] && \
     export PATH="$HOME/.cargo/bin:$PATH"
 
-branch_name()
-{
-  branch=$(git symbolic-ref HEAD 2> /dev/null | awk 'BEGIN{FS="/"} {print $NF}')
-  if [[ $branch == "" ]];
-  then
-    :
-  else
-    echo '['$branch'] '
-  fi
-}
+# }}}
+# PROMPT {{{
 
-case `uname` in
-    Darwin)
-        setopt PROMPT_SUBST
-        # jesus fuck
-        PROMPT='$(branch_name)%40<...<$( [[ $(pwd) == "/" ]] && echo "/" || echo $(pwd | awk -F/ '"'"'{print tolower($NF)}'"'"'))%<< $ '
-        ;;
-    Linux | FreeBSD)
-        PROMPT="%d $ "
-        ;;
-esac
+# parse commands in prompt string
+setopt PROMPT_SUBST
+PROMPT='$(branch_name)$(basename $(pwd)) $ '
 
-show_title() {
-    cwd=$(pwd | awk -F/ '{print tolower($NF)}')
-    [[ "$cwd" == "" ]] && cwd="/"
-    print -Pn "\e]2;$cwd\a"
+# prepend '[branch]' to the start of prompt if in git repo
+branch_name() {
+    branch=$(git symbolic-ref HEAD 2> /dev/null | sed 's:^refs/heads/::')
+    [[ $branch != "" ]] && printf "%s" "[$branch] "
 }
 
 # show newline after every command except first & clear
 skip_precmd() {
     precmd () {
-        show_title
         precmd() {
             echo
-            show_title
         }
     }
 }
 skip_precmd
 
-alias clear="skip_precmd; clear"
-
-export HISTSIZE=1000000000
-export SAVEHIST=$HISTSIZE
-# setopt EXTENDED_HISTORY
-
-
-
-# case insensitive completion
-setopt nocaseglob
-setopt no_list_ambiguous
-setopt complete_in_word
-
-ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=()
-ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=()
-
-autoload -Uz compinit && compinit
-zstyle ':completion:*' matcher-list '' 'm:{[:lower:]}={[:upper:]}' 'm:{[:lower:]}={[:upper:]} r:|?=**'
-bindkey '^I' complete-word
-
-bindkey -M vicmd gh beginning-of-line
-bindkey -M vicmd gl end-of-line
-
-commandline_mode() {
-    zle kill-buffer;
-    zle vi-insert;
-}
-zle -N commandline_mode
-bindkey -M vicmd : commandline_mode
-
-complete-word() {
-  _main_complete;
-  compstate[list]='list';
-  local word=$PREFIX$SUFFIX
-  (( compstate[unambiguous_cursor] <= ${#word} )) && compstate[insert]='menu';
-}
-
+# make ctrl+c print ^C
 TRAPINT() { 
     if [ "${KEYMAP}" = "main" -o "${KEYMAP}" = "viins" -o "${KEYMAP}" = "vicmd" -o "${KEYMAP}" = "viopp" ]; then
         zle end-of-line
@@ -189,77 +184,45 @@ TRAPINT() {
     fi
 }
 
+# }}}
+# AUTOCOMPLETION {{{
 
-cdls() {
-    test -z "$1" && cd || cd "$1"
-    ls --color=auto
+# case insensitive completion
+setopt nocaseglob
+setopt no_list_ambiguous
+setopt complete_in_word
+
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:]}={[:upper:]}' 'm:{[:lower:]}={[:upper:]} r:|?=**'
+
+complete-word() {
+  _main_complete;
+  compstate[list]='list';
+  local word=$PREFIX$SUFFIX
+  (( compstate[unambiguous_cursor] <= ${#word} )) && compstate[insert]='menu';
 }
+
+bindkey '^I' complete-word
+
+# }}}
+# FUNCTIONS {{{
+
+alias ls='ls --color=auto'
+
 mkcd() {
     mkdir "$1" && cd "$1"
 }
 
-# `time` command format
-[ `uname` = Darwin ] && MAX_MEMORY_UNITS=KB || MAX_MEMORY_UNITS=MB
-# TIMEFMT='%J took %U user (%*Es total), using %P cpu'\
-# ' and %M '$MAX_MEMORY_UNITS' of memory'$'\n'
-TIMEFMT=$'\n''%J  %U user %*Es total %P cpu %M '$MAX_MEMORY_UNITS' mem'
-
-# aliases
-alias ls="ls --color=auto"
-# alias cd="cdls"
-
-eval "$(fnm env --use-on-cd)"
-
-alias     ..="cd .."
-alias    ...="cd ../.."
-alias   ....="cd ../../.."
-alias  .....="cd ../../../.."
-alias ......="cd ../../../../.."
-
-fcd() {
-    out="$HOME/.cache/fcd_dest"
-    ~/.bin/fcd
-    if [ -e "$out" ]; then
-        file=$(cat "$out")
-
-        file=${file//\~/$HOME}
-        file=${file//\$HOME/$HOME}
-
-        if [ -e "$file" ]; then
-            if [ -d "$file" ]; then
-                cd "$file";
-                if [ "$file" = "/Users/jake/Downloads" ]; then
-                    ls -trl
-                else
-                    ls
-                fi
-            else
-                vim "$file"
-            fi
-        fi
+jfind_source() {
+    dest=$(~/.config/jfind/jfind-source.sh)
+    dest=${${dest//\~/$HOME}//\$HOME/$HOME}
+    if [ -d "$dest" ]; then
+        cd "$dest";
+        [ "$dest" = "$HOME/Downloads" ] && ls -trl || ls
+    elif [ -f "$dest" ]; then
+        nvim "$dest"
     fi
 }
-
-function ranger {
-	local IFS=$'\t\n'
-	local tempfile="$(mktemp -t tmp.XXXXXX)"
-	local ranger_cmd=(
-		command
-		ranger
-		--cmd="map q chain shell echo %d > "$tempfile"; quitall"
-	)
-	
-	${ranger_cmd[@]} "$@"
-	if [[ -f "$tempfile" ]] && [[ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]]; then
-		cd -- "$(cat "$tempfile")" || return
-	fi
-	command rm -f -- "$tempfile" 2>/dev/null
-}
-
-
-bindkey -s '' 'fcd'
-
-alias jmatrix="jmatrix --bg '#282932' --trail 12"
 
 lfcd () {
     tmp="$(mktemp)"
@@ -271,12 +234,14 @@ lfcd () {
     fi
     ls
 }
-alias lf=lfcd
 
 cdls() {
-    cd $1 && ls
+    [[ "$1" = "-" ]] && printf "cd: " && cd - && ls && return
+    [ ! -n "$1" ] && 1=$HOME
+    [ ! -e "$1" ] && echo "cd: no such file or directory: $1" > /dev/stderr && return
+    [ ! -d "$1" ] && echo "cd: not a directory: $1" > /dev/stderr && return
+    cd "$1" && ls
 }
-alias cd=cdls
 
 mvcd() {
     mv $@ && cdls "$@[-1]"
@@ -298,39 +263,47 @@ lscat() {
     fi
 }
 
+whatis() {
+    [[ $? -eq 1 ]] && echo "Usage: whatis {command}" && exit 1;
+    for arg in $@; do
+        man -P cat $arg \
+            | awk 'name==1{print $0; exit} /N.*A.*M.*E[^A-Za-z]*$/{name=1}' \
+            | sed 's/^[ \t]*//g'
+    done
+}
+
+repeat_last_command() {
+    $(history | tail -n1 | awk '{$1=""; print $0}')
+}
+
+# }}}
+# ALIASES {{{
+
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+alias k=' repeat_command'
+alias q=exit
+alias vi=nvim
+alias vim=nvim
+alias netcli=/Applications/NetLinkz/peer/netcli
+alias clear="skip_precmd; echo; zz"
+alias jmatrix="jmatrix --bg '#282932' --trail 12"
+alias lf=lfcd
 alias ls=lscat
 alias cat=catls
-
+alias cd=cdls
 alias js-beautify='js-beautify -b end-expand'
+alias yarn='yarn --emoji false'
 
-# script kiddie stuff
-remote() {
-    echo
-    timeout 4 traceroute cia.gov
-    clear
-    echo "[SUCCESS] Starting session..."
-    sleep 0.8
-    echo
-    sleep 0.05
-    echo "Remote BASH session - www.cia.gov:22"
-    sleep 0.05
-    echo
-    sleep 0.05
-    echo "Confidential - Do not leave session unattended."
-    sleep 0.05
-    echo
-    sleep 0.05
-    echo "Last Login     Thu  5 May 2022 23:52:38 AWST"
-    sleep 0.05
-    echo "OS             CentOS Linux 8.5.2110"
-    sleep 0.05
-    echo "Kernel         21.1.0"
-    sleep 0.05
-    echo "Uptime         3 months, 22 days, 3 hours, 38 mins"
-    sleep 0.05
-    echo "Current Users  22"
-    sleep 0.05
-    echo
-    bash
-    echo
-}
+# }}}
+# EXPORTS {{{
+
+export EDITOR=nvim
+export PAGER=nvimpager
+
+# }}}
+
+# vim: foldmethod=marker

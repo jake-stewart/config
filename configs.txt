@@ -1,18 +1,26 @@
 # home
-config_files/home/bashrc     $HOME/.bashrc
-config_files/home/inputrc    $HOME/.inputrc
+config_files/home/inputrc $HOME/.inputrc
 config_files/home/dir_colors $HOME/.dir_colors
-config_files/home/zshrc      $HOME/.zshrc
-config_files/home/tmux.conf  $HOME/.tmux.conf
+config_files/home/zshrc $HOME/.zshrc
+config_files/home/tmux.conf $HOME/.tmux.conf
 
 # nvim
-config_files/nvim/init.vim       $HOME/.config/nvim/init.vim
-config_files/nvim/custom.vim     $HOME/.config/nvim/colors/custom.vim
-config_files/nvim/plug.vim       $HOME/.local/share/nvim/site/autoload/plug.vim
+config_files/nvim/init.vim $HOME/.config/nvim/init.vim
+config_files/nvim/custom.vim $HOME/.config/nvim/colors/custom.vim
+
+# nvim pager
+config_files/nvimpager/init.vim $HOME/.config/nvimpager/init.vim
+config_files/nvimpager/custom.vim $HOME/.config/nvimpager/colors/custom.vim
 
 # kitty
 config_files/kitty/kitty.conf $HOME/.config/kitty/kitty.conf
-config_files/kitty/tab_bar.py $HOME/.config/kitty/tab_bar.py
+
+# lf
+config_files/lf/lfrc $HOME/.config/lf/lfrc
 
 # karabiner
-config_files/karabiner/config.json $HOME/.config/karabiner/assets/complex_modifications/config.json
+config_files/karabiner/disable_caps.json ~/.config/karabiner/assets/complex_modifications/disable_caps.json
+config_files/karabiner/disable_macos_keys.json ~/.config/karabiner/assets/complex_modifications/disable_macos_keys.json
+config_files/karabiner/right_escape.json ~/.config/karabiner/assets/complex_modifications/right_escape.json
+config_files/karabiner/swap_modifiers.json ~/.config/karabiner/assets/complex_modifications/swap_modifiers.json
+config_files/karabiner/tab_control.json ~/.config/karabiner/assets/complex_modifications/tab_control.json

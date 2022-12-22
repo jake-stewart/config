@@ -4,6 +4,16 @@ config_files/home/dir_colors $HOME/.dir_colors
 config_files/home/zshrc $HOME/.zshrc
 config_files/home/tmux.conf $HOME/.tmux.conf
 
+# tmux
+config_files/tmux/popup-jfind-project.sh $HOME/.config/tmux/popup-jfind-project.sh
+config_files/tmux/popup-jfind-source.sh $HOME/.config/tmux/popup-jfind-source.sh
+config_files/tmux/popup-python.sh $HOME/.config/tmux/popup-python.sh
+config_files/tmux/popup-scratch.sh $HOME/.config/tmux/popup-scratch.sh
+config_files/tmux/popup-switch-session.sh $HOME/.config/tmux/popup-switch-session.sh
+config_files/tmux/popup-terminal.sh $HOME/.config/tmux/popup-terminal.sh
+config_files/tmux/popup.sh $HOME/.config/tmux/popup.sh
+config_files/tmux/switch-session.sh $HOME/.config/tmux/switch-session.sh
+
 # jfind
 config_files/jfind/config.json $HOME/.config/jfind/config.json
 config_files/jfind/jfind-active-session.sh $HOME/.config/jfind/jfind-active-session.sh

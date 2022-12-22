@@ -1,4 +1,5 @@
 #include "../include/util.hpp"
+#include <cstring>
 
 std::string execGetline(std::string cmd) {
     char buffer[128];

@@ -17,8 +17,8 @@ mkdir -p $HOME/.config/zsh
 
 cd tmux-status
 g++ -std=c++2a -o tmux-status -I include src/*
-[[ ! -e ~/.bin ]] && mkdir ~/.bin
-[[ ! -d ~/.bin ]] && echo "~/.bin is not a directory" && exit 1
-cp tmux-status ~/.bin
+[[ ! -e ~/.config/tmux ]] && mkdir -p ~/.config/tmux
+[[ ! -d ~/.config/tmux ]] && echo "~/.config/tmux is not a directory" && exit 1
+cp tmux-status ~/.config/tmux/status
 cd ..
 

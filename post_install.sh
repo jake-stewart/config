@@ -22,3 +22,9 @@ g++ -std=c++2a -o tmux-status -I include src/*
 cp tmux-status ~/.config/tmux/status
 cd ..
 
+[ ! -e ~/.config/jfind/sources ] \
+    && cp ~/.config/jfind/min_sources ~/.config/jfind/sources
+
+[ ! -e ~/.config/jfind/sessions.json ] \
+    && cp ~/.config/jfind/min_sessions.json ~/.config/jfind/sessions.json
+

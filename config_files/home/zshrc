@@ -26,7 +26,7 @@ export SAVEHIST=$HISTSIZE
 # PROGRAM CONFIGS {{{
 
 # react
-export NODE_OPTIONS="--openssl-legacy-provider"
+# export NODE_OPTIONS="--openssl-legacy-provider"
 
 # homebrew
 export HOMEBREW_NO_EMOJI=1
@@ -36,8 +36,13 @@ JAVA_VMS="$HOME/Library/Java/JavaVirtualMachines"
 export JAVA_HOME="$JAVA_VMS/openjdk-17.0.2/Contents/Home/"
 export JDTLS_HOME="/usr/local/Cellar/jdtls/1.11.0/libexec"
 
+command_exists() {
+    type "$1" > /dev/null
+}
+
 # fnm
-eval "$(fnm env --use-on-cd)"
+command_exists "fnm" && \
+    eval "$(fnm env --use-on-cd)"
 
 # time
 [ `uname` = Darwin ] && MAX_MEMORY_UNITS=KB || MAX_MEMORY_UNITS=MB

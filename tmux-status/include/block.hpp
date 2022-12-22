@@ -1,4 +1,5 @@
 #include <string>
+#include <functional>
 
 struct Block
 {

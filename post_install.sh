@@ -16,7 +16,7 @@ mkdir -p $HOME/.config/zsh
     git clone https://github.com/zsh-users/zsh-syntax-highlighting $HOME/.config/zsh/zsh-syntax-highlighting
 
 cd tmux-status
-g++ -std=c++20 -I -o tmux-status include src/*
+g++ -std=c++2a -I -o tmux-status include src/*
 [[ ! -e ~/.bin ]] && mkdir ~/.bin
 [[ ! -d ~/.bin ]] && echo "~/.bin is not a directory" && exit 1
 cp tmux-status ~/.bin

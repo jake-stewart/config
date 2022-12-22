@@ -1,25 +1,27 @@
-#
-#  _ _     _      __ _ _           
-# | (_)___| |_   / _(_) | ___  ___ 
-# | | / __| __| | |_| | |/ _ \/ __|
-# | | \__ \ |_  |  _| | |  __/\__ \
-# |_|_|___/\__| |_| |_|_|\___||___/
-#
-
+# oooo   .o88o. 
+# `888   888 `" 
+#  888  o888oo  
+#  888   888    
+#  888   888    
+#  888   888    
+# o888o o888o   
+              
 # SETTINGS {{{
 
 set incsearch
 set hidden
 set previewer ~/.config/lf/bat_preview
+cmd open  # disable 'l' to 'open' files
 
 # }}}
 # KEY BINDINGS {{{
 
-map c push a<c-u>           # rename completely
-map a rename                # rename at the very end
-map i push a<c-a>           # rename at the very beginning
-map i push a<a-b><a-b><a-f> # rename before extention
-map a push a<a-b>           # rename after extention
+map C push A<c-u>             # rename entirely
+map c push A<a-b><c-u>.<left> # rename until extension
+map I push A<c-a>             # rename at the very beginning
+map i push A<a-b><a-b><a-f>   # rename before extention
+map a push A<a-b>             # rename after extention
+map A rename                  # rename at the very end
 
 map g top
 map D delete

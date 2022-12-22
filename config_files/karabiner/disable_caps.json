@@ -14,7 +14,11 @@
                         ]
                     }
                 },
-                "to": []
+                "to": [
+                    {
+                        "key_code": "right_option"
+                    }
+                ]
             }
         ]
     }]

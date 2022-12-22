@@ -17,7 +17,7 @@ let s:green       = "#88B369"
 let s:yellow      = "#E5C07B"
 let s:blue        = "#61AFEF"
 let s:purple      = "#B663CC"
-let s:bg          = "#262832"
+let s:bg          = "#252932"
 let s:fg          = "#b3b3c3"
 let s:visual_bg   = "#323644"
 let s:cul_bg      = "#2a2e3a"
@@ -43,7 +43,7 @@ endfunction
 " }}}
 " HL DEFINITION {{{
 
-call HL("Normal",                   s:fg,          "NONE",        "NONE")
+call HL("Normal",                   s:fg,          s:bg,          "NONE")
 call HL("Conceal",                  s:fg,          "NONE",        "NONE")
 call HL("Cursor",                   s:bg,          s:fg,          "NONE")
 call HL("CursorLine",               "NONE",        s:cul_bg,      "NONE")
@@ -86,14 +86,12 @@ call HL("Float",                    s:dark_yellow, "NONE",        "NONE")
 call HL("Number",                   s:dark_yellow, "NONE",        "NONE")
 call HL("Boolean",                  s:dark_yellow, "NONE",        "NONE")
 call HL("Identifier",               s:red,         "NONE",        "NONE")
-call HL("SpellBad",                 s:red,         "NONE",        "UNDERCURL")
 call HL("Keyword",                  s:red,         "NONE",        "NONE")
 call HL("Error",                    s:error_red,   "NONE",        "NONE")
 call HL("ErrorMsg",                 s:error_red,   "NONE",        "NONE")
 call HL("String",                   s:green,       "NONE",        "NONE")
 call HL("Character",                s:green,       "NONE",        "NONE")
 call HL("PreProc",                  s:yellow,      "NONE",        "NONE")
-call HL("SpellCap",                 s:yellow,      "NONE",        "UNDERCURL")
 call HL("PreCondit",                s:yellow,      "NONE",        "NONE")
 call HL("StorageClass",             s:yellow,      "NONE",        "NONE")
 call HL("Structure",                s:yellow,      "NONE",        "NONE")
@@ -183,6 +181,11 @@ call HL("DiagnosticUnderlineInfo",  s:comment_fg,  "NONE",        "underline")
 call HL("DiagnosticUnderlineWarn",  s:warn_orange, "NONE",        "underline")
 call HL("Border",                   s:dark_grey,   "NONE",        "NONE")
 
+" exe 'hi SpellCap gui=UNDERCURL guisp=' . s:yellow
+" exe 'hi SpellBad gui=UNDERCURL guisp=' . s:red
+exe 'hi SpellCap gui=UNDERCURL guifg=' . s:yellow
+exe 'hi SpellBad gui=UNDERCURL guifg=' . s:red
+
 hi default link BqfPreviewBorder Border
 hi default link BqfPreviewFloat  Normal
 hi default link BqfPreviewCursor Cursor
@@ -191,12 +194,22 @@ hi default link BqfPreviewRange  IncSearch
 " }}}
 " TERMINAL HIGHLIGHTING {{{
 
-let g:terminal_ansi_colors = [
- \ s:comment_fg, s:red,    s:green, s:yellow,
- \ s:blue,       s:purple, s:cyan,  s:white,
- \ s:comment_fg, s:red,    s:green, s:yellow,
- \ s:blue,       s:purple, s:cyan,  s:white
- \]
+let g:terminal_color_0  = s:comment_fg
+let g:terminal_color_1  = s:red
+let g:terminal_color_2  = s:green
+let g:terminal_color_3  = s:yellow
+let g:terminal_color_4  = s:blue
+let g:terminal_color_5  = s:purple
+let g:terminal_color_6  = s:cyan
+let g:terminal_color_7  = s:white
+let g:terminal_color_8  = s:comment_fg
+let g:terminal_color_9  = s:red
+let g:terminal_color_10 = s:green
+let g:terminal_color_11 = s:yellow
+let g:terminal_color_12 = s:blue
+let g:terminal_color_13 = s:purple
+let g:terminal_color_14 = s:cyan
+let g:terminal_color_15 = s:white
 
 " }}}
 " VISUAL CURSORLINE {{{

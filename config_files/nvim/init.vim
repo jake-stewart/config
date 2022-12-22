@@ -1,10 +1,10 @@
-"
-"  _   _                 _           
-" | \ | | ___  _____   _(_)_ __ ___  
-" |  \| |/ _ \/ _ \ \ / / | '_ ` _ \ 
-" | |\  |  __/ (_) \ V /| | | | | | |
-" |_| \_|\___|\___/ \_/ |_|_| |_| |_|
-"
+" ooooo      ooo                                  o8o                    
+" `888b.     `8'                                  `"'                    
+"  8 `88b.    8   .ooooo.   .ooooo.  oooo    ooo oooo  ooo. .oo.  .oo.   
+"  8   `88b.  8  d88' `88b d88' `88b  `88.  .8'  `888  `888P"Y88bP"Y88b  
+"  8     `88b.8  888ooo888 888   888   `88..8'    888   888   888   888  
+"  8       `888  888    .o 888   888    `888'     888   888   888   888  
+" o8o        `8  `Y8bod8P' `Y8bod8P'     `8'     o888o o888o o888o o888o 
 
 " SETTINGS {{{1
 
@@ -37,7 +37,7 @@ set mousemodel=extend               " remove right click menu
 set noruler                         " hide commandline ruler
 set rulerformat=%l,%c%v%=%p         " same syntax as statusline
 set number                          " show number column
-set signcolumn=number               " both sign and number in number column
+set signcolumn=no                   " highlight line nr instead of signs
 set hlsearch                        " highlight search matches
 set incsearch                       " show matches while typing
 set ignorecase                      " case insensitive search
@@ -77,9 +77,115 @@ autocmd filetype * call RemoveAutoCommenting()
 function RestoreCursorPosition()
     if line("'\"") > 0 && line("'\"") <= line("$")
         exe "normal g'\""
+        call feedkeys("zz")
     endif
 endfunction
 autocmd BufReadPost * call RestoreCursorPosition()
+
+autocmd FileType c,cpp,cs,java,php setlocal commentstring=//\ %s
+
+" }}}
+" SNIPPETS {{{
+
+au FileType python inoremap <c-f><c-d> print()<left>
+au FileType php inoremap <c-f><c-d> error_log();<esc>hi
+au FileType blade inoremap <c-f><c-d> error_log();<esc>hi
+au FileType javascript inoremap <c-f><c-d> console.log();<esc>hi
+au FileType cpp inoremap <c-f><c-d> printf();<esc>hi
+au FileType c inoremap <c-f><c-d> printf(printf);<esc>hi
+au FileType java inoremap <c-f><c-d> System.out.println();<esc>hi
+au FileType bash inoremap <c-f><c-d> echo<space>
+au FileType sh inoremap <c-f><c-d> echo<space>
+
+au FileType python inoremap <c-f><c-w> while :<left>
+au FileType php inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
+au FileType blade inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
+au FileType javascript inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
+au FileType cpp inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
+au FileType c inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
+au FileType java inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
+au FileType bash inoremap <c-f><c-w> while ; do<CR>done<esc>k$hhhi
+au FileType sh inoremap <c-f><c-w> while ; do<CR>done<esc>k$hhhi
+
+au FileType python inoremap <c-f><c-f> for :<left>
+au FileType php inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
+au FileType blade inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
+au FileType javascript inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
+au FileType cpp inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
+au FileType c inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
+au FileType java inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
+au FileType bash inoremap <c-f><c-f> for ; do<CR>done<esc>k$hhhi
+au FileType sh inoremap <c-f><c-f> for ; do<CR>done<esc>k$hhhi
+
+au FileType python inoremap <c-f><c-i> if :<esc>i
+au FileType php inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
+au FileType blade inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
+au FileType javascript inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
+au FileType cpp inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
+au FileType c inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
+au FileType java inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
+au FileType bash inoremap <c-f><c-i> if ; then<CR>fi<esc>k$bbi
+au FileType sh inoremap <c-f><c-i> if ; then<CR>fi<esc>k$bbi
+
+au FileType python inoremap <c-f><c-o> elif :<esc>i
+au FileType php inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
+au FileType blade inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
+au FileType javascript inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
+au FileType cpp inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
+au FileType c inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
+au FileType java inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
+au FileType bash inoremap <c-f><c-o> elif ; then<esc>bbi
+au FileType sh inoremap <c-f><c-o> elif ; then<esc>bbi
+
+au FileType python inoremap <c-f><c-e> else:<CR>
+au FileType php inoremap <c-f><c-e> else {<CR>}<esc>O
+au FileType blade inoremap <c-f><c-e> else {<CR>}<esc>O
+au FileType javascript inoremap <c-f><c-e> else {<CR>}<esc>O
+au FileType cpp inoremap <c-f><c-e> else {<CR>}<esc>O
+au FileType c inoremap <c-f><c-e> else {<CR>}<esc>O
+au FileType java inoremap <c-f><c-e> else {<CR>}<esc>O
+au FileType bash inoremap <c-f><c-e> else<CR>
+au FileType sh inoremap <c-f><c-e> else<CR>
+
+" au FileType python inoremap <c-f><c-s>
+au FileType php inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
+au FileType blade inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
+au FileType javascript inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
+au FileType cpp inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
+au FileType c inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
+au FileType java inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
+au FileType bash inoremap <c-f><c-s> case in<CR>esac<esc>k$bhi<space>
+au FileType sh inoremap <c-f><c-s> case in<CR>esac<esc>k$bhi<space>
+
+" au FileType python inoremap <c-f><c-v>
+au FileType php inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
+au FileType blade inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
+au FileType javascript inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
+au FileType cpp inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
+au FileType c inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
+au FileType java inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
+au FileType bash inoremap <c-f><c-v> )<CR>;;<esc>k$i
+au FileType sh inoremap <c-f><c-v> )<CR>;;<esc>k$i
+
+au FileType python inoremap <c-f><c-m> def ():<esc>$F(i
+au FileType php inoremap <c-f><c-m> function () {<CR>}<esc>k$F(i
+au FileType blade inoremap <c-f><c-m> function () {<CR>}<esc>k$F(i
+au FileType javascript inoremap <c-f><c-m> function () {<CR>}<esc>k$F(i
+au FileType cpp inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
+au FileType c inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
+au FileType java inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
+au FileType bash inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
+au FileType sh inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
+
+au FileType python inoremap <c-f><c-l> lambda:<esc>i
+au FileType php inoremap <c-f><c-l> function() {<CR>}<esc>k$hhi
+au FileType blade inoremap <c-f><c-l> function() {<CR>}<esc>k$hhi
+au FileType javascript inoremap <c-f><c-l> () => {<CR>}<esc>k$BBa
+" au FileType cpp inoremap <c-f><c-l>
+" au FileType c inoremap <c-f><c-l>
+" au FileType java inoremap <c-f><c-l>
+" au FileType bash inoremap <c-f><c-l>
+" au FileType sh inoremap <c-f><c-l>
 
 " }}}
 " MAPPINGS {{{1
@@ -93,9 +199,6 @@ nnoremap <silent><leader>c :let &cuc = !&cuc<cr>
 " toggle color column
 nnoremap <silent><leader>8 :let &cc = &cc == 0 ? 80 : 0<cr>
 
-" automatically create open and close brace
-inoremap <c-b> <esc>a <esc>ciw {<cr>}<esc>o
-
 " visually select pasted content
 nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
 
@@ -103,17 +206,53 @@ nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
 nnoremap <silent><space>s ^dj^v$hpk$p
 
 " clear search highlight
-nnoremap <silent><esc> :noh<cr>
+nnoremap <silent><esc> :<C-U>noh<cr>
 
-" go to start and end of line
-noremap gh ^
-noremap gl $
+" make scrolling more reliable (center screen + same distance)
+nnoremap <c-d> 10jzz
+nnoremap <c-u> 10kzz
+" nnoremap <c-d> M<c-d>
+" nnoremap <c-u> M<c-u>
+
+" cgn on current word
+nnoremap <silent><leader>n :let @/=expand("<cword>")<CR>:set hls<CR>cgn
+nnoremap <silent><leader>N :let @/=expand("<cword>")<CR>:set hls<CR>cgN
+
+" cgn on selection
+xnoremap <silent><leader>n "zy:let @/=@z<CR>cgn
+xnoremap <silent><leader>N "zy:let @/=@z<CR>cgN
 
 " make Y act like D and C
 nnoremap Y y$
 
-" easily replace macro with q
+" easily repeat macro with q
 nnoremap Q @q
+
+" ^, $, and %, <c-6> are motions I use all the time
+" however, the keys are in awful positions
+noremap gh ^
+noremap gl $
+map gm %
+nnoremap <c-p> <c-^>
+
+" I center screen all the time, zz is slow and hurts my finger
+noremap gb zz
+nnoremap m zz
+
+nnoremap <silent><leader>s z=1<CR><CR>
+
+" dd, yy, cc, etc all take too long since the same key is pressed twice
+" use dl, yl, cl etc instead
+omap l _
+
+" TEMP: stop me from using old commands
+nnoremap dd <NOP>
+nnoremap yy <NOP>
+nnoremap cc <NOP>
+nnoremap gcc <NOP>
+nnoremap >> <NOP>
+nnoremap << <NOP>
+nnoremap <c-^> <NOP>
 
 " }}}
 " VIRTIDX {{{
@@ -225,10 +364,10 @@ function! Slide(direction, smart_syntax)
     endif
 endfunction
 
-nnoremap <expr><leader>j Slide(1, 0)
-vnoremap <expr><leader>j Slide(1, 0)
-nnoremap <expr><leader>k Slide(-1, 0)
-vnoremap <expr><leader>k Slide(-1, 0)
+nnoremap <expr><leader>J Slide(1, 0)
+vnoremap <expr><leader>J Slide(1, 0)
+nnoremap <expr><leader>K Slide(-1, 0)
+vnoremap <expr><leader>K Slide(-1, 0)
 
 nnoremap <expr><leader>j Slide(1, 1)
 vnoremap <expr><leader>j Slide(1, 1)
@@ -236,12 +375,24 @@ nnoremap <expr><leader>k Slide(-1, 1)
 vnoremap <expr><leader>k Slide(-1, 1)
 
 " }}}
+" POLYGLOT SETTINGS {{{
+
+let g:polyglot_disabled = ['sensible']
+
+" }}}
 " PLUGINS {{{
 
 call plug#begin()
 Plug 'tpope/vim-repeat'
-Plug 'kylechui/nvim-surround'
-Plug 'vimjas/vim-python-pep8-indent'
+" Plug 'kylechui/nvim-surround'
+Plug 'tpope/vim-surround'
+" Plug 'machakann/vim-sandwich'
+" Plug 'vimjas/vim-python-pep8-indent'
+Plug 'jwalton512/vim-blade'
+" Plug 'sheerun/vim-polyglot'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" Plug 'catppuccin/nvim'
+" Plug 'Eandrju/cellular-automaton.nvim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-vinegar'
@@ -280,6 +431,7 @@ nmap <silent> gd <plug>(coc-definition)
 nmap <silent> gy <plug>(coc-type-definition)
 nmap <silent> gi <plug>(coc-implementation)
 nmap <silent> gr <plug>(coc-references)
+nmap <leader>rn  <plug>(coc-rename)
 nnoremap <silent> K :call ShowDocumentation()<cr>
 
 function! ShowDocumentation()
@@ -296,6 +448,10 @@ inoremap <silent><expr> <tab>
       \ coc#refresh()
 inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\<c-h>"
 
+
+" inoremap <silent><expr><backspace> "\<backspace>" . CocActionAsync('showSignatureHelp')
+" inoremap <silent><expr><space> ' ' . CocActionAsync('showSignatureHelp')
+
 function! CheckBackspace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
@@ -306,25 +462,26 @@ inoremap <silent><expr> <c-j>
 
 inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<cr>"
 
-xmap if <plug>(coc-funcobj-i)
-omap if <plug>(coc-funcobj-i)
-xmap af <plug>(coc-funcobj-a)
-omap af <plug>(coc-funcobj-a)
-xmap ic <plug>(coc-classobj-i)
-omap ic <plug>(coc-classobj-i)
-xmap ac <plug>(coc-classobj-a)
-omap ac <plug>(coc-classobj-a)
-
 " }}}
 " EASY ALIGN SETTINGS {{{
 
-xnoremap ga <plug>(EasyAlign)
-nnoremap ga <plug>(EasyAlign)
+xnoremap <leader>a <plug>(EasyAlign)
+nnoremap <leader>a <plug>(EasyAlign)
+
+" }}}
+" TREESITTER SETTINGS {{{
+
+" function! EnableTreesitter()
+"     TSEnable highlight
+"     " TSEnable indent
+" endfunction
+" au VimEnter * call EnableTreesitter()
 
 " }}}
 " SURROUND SETTINGS {{{
 
-lua require("nvim-surround").setup()
+" lua require("nvim-surround").setup()
+" runtime macros/sandwich/keymap/surround.vim
 
 " }}}
 " SWAP SETTINGS {{{
@@ -335,6 +492,12 @@ nmap gs <plug>(swap-interactive)
 " WORDMOTION SETTINGS {{{
 
 let g:wordmotion_prefix = "<space>"
+" nmap <c-w> <space>w
+" nmap <c-e> <space>e
+" nmap <c-b> <space>b
+" omap <c-w> <space>w
+" omap <c-e> <space>e
+" omap <c-b> <space>b
 
 " }}}
 " SPLITJOIN SETTINGS {{{
@@ -345,6 +508,7 @@ let g:splitjoin_html_attributes_hanging = 1
 
 "}}}
 " JFIND {{{
+
 function! OnJFindExit(window, status)
     call nvim_win_close(a:window, 0)
     if a:status == 0
@@ -359,34 +523,74 @@ endfunction
 
 function! JFind()
     let project = system('~/.config/jfind/jfind-match-project.sh')
-    if project == ""
-        echo "Unknown project: " . getcwd()
-        return
-    endif
-    let width = float2nr(&columns * 0.9)
-    let height = float2nr(&lines * 0.7)
+    " if project == ""
+    "     echo "Unknown project: " . getcwd()
+    "     return
+    " endif
+
+    let max_width = 118
+    let max_height = 26
+
+    let border = "none"
+    let col = 0
+    let row = 0
 
     let buf = nvim_create_buf(v:false, v:true)
-
     let ui = nvim_list_uis()[0]
+
+    if &columns > max_width
+        let width = &columns % 2 ? max_width - 1 : max_width
+        if &lines > max_height
+            let height = &lines % 2 ? max_height - 1 : max_height
+            let border = "rounded"
+            let col = (ui.width/2) - (width/2) - 1
+            let row = (ui.height/2) - (height/2) - 1
+        else
+            let width = 1000
+            let height = 1000
+        endif
+    else
+        let width = 1000
+        let height = 1000
+    endif
+
     let opts = {'relative': 'editor',
                 \ 'width': width,
                 \ 'height': height,
-                \ 'col': (ui.width/2) - (width/2),
-                \ 'row': (ui.height/2) - (height/2),
+                \ 'col': col,
+                \ 'row': row,
                 \ 'anchor': 'nw',
                 \ 'style': 'minimal',
-                \ 'border': 'rounded',
+                \ 'border': border,
                 \ }
 
     let win = nvim_open_win(buf, 1, opts)
     call nvim_win_set_option(win, 'winhl', 'normal:normal')
-    let t = termopen('~/.config/jfind/jfind-project.sh',
-                \ {'on_exit': {status, data -> OnJFindExit(win, data)}})
+    if project == ""
+        let t = termopen('~/.config/jfind/jfind-recursive.sh',
+                    \ {'on_exit': {status, data -> OnJFindExit(win, data)}})
+    else
+        let t = termopen('~/.config/jfind/jfind-project.sh',
+                    \ {'on_exit': {status, data -> OnJFindExit(win, data)}})
+    endif
     startinsert
 endfunction
 
-nnoremap <silent><c-f> :call JFind()<cr>
+function! JFindTmux()
+    silent! !~/.config/tmux/popup-jfind-project.sh
+    try
+        let l:contents = readfile($HOME . "/.cache/jfind_out")
+        exe 'edit ' . l:contents[0]
+    catch
+        return
+    endtry
+endfunction
+
+if exists('$TMUX')
+    nnoremap <silent><c-f> :call JFindTmux()<cr>
+else
+    nnoremap <silent><c-f> :call JFind()<cr>
+endif
 
 " }}}
 " FORCE GO FILE {{{
@@ -402,6 +606,18 @@ function! ForceGoFile(fname)
 endfunction
 
 noremap <silent><leader>gf :call ForceGoFile(expand("<cfile>"))<cr>
+
+" }}}
+" SYNSTACK {{{
+
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+
+command SynID echo synIDattr(synID(line("."), col("."), 1), "name")
 
 " }}}
 

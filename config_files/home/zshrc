@@ -1,11 +1,11 @@
-#
-#  _____    _     
-# |__  /___| |__  
-#   / // __| '_ \ 
-#  / /_\__ \ | | |
-# /____|___/_| |_|
-#
-
+#  oooooooooooo          oooo        
+# d'""""""d888'          `888        
+#       .888P    .oooo.o  888 .oo.   
+#      d888'    d88(  "8  888P"Y88b  
+#    .888P      `"Y88b.   888   888  
+#   d888'    .P o.  )88b  888   888  
+# .8888888888P  8""888P' o888o o888o 
+                                   
 # COMPATABILITY {{{
 
 export COLORTERM="truecolor"
@@ -88,6 +88,7 @@ bindkey "^?" backward-delete-char
 # move cursor to start/end of line with gh/gl
 bindkey -M vicmd gh beginning-of-line
 bindkey -M vicmd gl end-of-line
+bindkey -M vicmd gm vi-match-bracket
 
 # make : act like opening commandline mode
 commandline_mode() {
@@ -96,6 +97,14 @@ commandline_mode() {
 }
 zle -N commandline_mode
 bindkey -M vicmd : commandline_mode
+
+bruh() {
+    zle beginning-of-line;
+    zle zle-keymap-select;
+    zle end-of-line;
+}
+zle -N bruh
+bindkey -M viopp -s l -
 
 # bind <ctrl-f> to jfind a source
 bindkey -s '' 'jfind_source'
@@ -147,6 +156,9 @@ bindkey '^K' autosuggest-accept
 
 [[ -d $HOME/.cargo/bin ]] && \
     export PATH="$HOME/.cargo/bin:$PATH"
+
+[[ -d $HOME/.dotnet/tools ]] && \
+    export PATH="$HOME/.dotnet/tools:$PATH"
 
 # }}}
 # PROMPT {{{
@@ -213,9 +225,30 @@ mkcd() {
     mkdir "$1" && cd "$1"
 }
 
+expand_home() {
+    expanded=$1
+    expanded=${expanded/\~/$HOME}
+    expanded=${expanded/\$HOME/$HOME}
+    echo "$expanded"
+}
+
+# jfind_source() {
+#     dest=$(expand_home $(~/.config/jfind/jfind-source.sh))
+#     if [ -d "$dest" ]; then
+#         cd "$dest";
+#         [ "$dest" = "$HOME/Downloads" ] && ls -trl || ls
+#     elif [ -f "$dest" ]; then
+#         nvim "$dest"
+#     fi
+# }
+
 jfind_source() {
-    dest=$(~/.config/jfind/jfind-source.sh)
-    dest=${${dest//\~/$HOME}//\$HOME/$HOME}
+    if [ -n "$TMUX" ]; then
+        ~/.config/tmux/popup-jfind-source.sh
+    else
+        ~/.config/jfind/jfind-source.sh ~/.cache/jfind_out
+    fi
+    dest=$(expand_home $(cat ~/.cache/jfind_out))
     if [ -d "$dest" ]; then
         cd "$dest";
         [ "$dest" = "$HOME/Downloads" ] && ls -trl || ls
@@ -235,12 +268,13 @@ lfcd () {
     ls
 }
 
-cdls() {
-    [[ "$1" = "-" ]] && printf "cd: " && cd - && ls && return
+
+cd_wrapper() {
+    [[ "$1" = "-" ]] && printf "cd: " && cd - && ls && tmux refresh-client -S && return
     [ ! -n "$1" ] && 1=$HOME
     [ ! -e "$1" ] && echo "cd: no such file or directory: $1" > /dev/stderr && return
     [ ! -d "$1" ] && echo "cd: not a directory: $1" > /dev/stderr && return
-    cd "$1" && ls
+    cd "$1" && ls && tmux refresh-client -S 
 }
 
 mvcd() {
@@ -285,16 +319,15 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 alias k=' repeat_command'
-alias q=exit
 alias vi=nvim
 alias vim=nvim
+alias cd=cd_wrapper
 alias netcli=/Applications/NetLinkz/peer/netcli
 alias clear="skip_precmd; echo; zz"
-alias jmatrix="jmatrix --bg '#282932' --trail 12"
+alias jmatrix="jmatrix --bg '#262832' --trail 12"
 alias lf=lfcd
 alias ls=lscat
 alias cat=catls
-alias cd=cdls
 alias js-beautify='js-beautify -b end-expand'
 alias yarn='yarn --emoji false'
 

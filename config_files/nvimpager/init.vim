@@ -1,11 +1,20 @@
+" ooooo      ooo              o8o                    
+" `888b.     `8'              `"'                    
+"  8 `88b.    8  oooo    ooo oooo  ooo. .oo.  .oo.   
+"  8   `88b.  8   `88.  .8'  `888  `888P"Y88bP"Y88b  
+"  8     `88b.8    `88..8'    888   888   888   888  
+"  8       `888     `888'     888   888   888   888  
+" o8o        `8      `8'     o888o o888o o888o o888o 
 "
-"  _   _       _                                       
-" | \ | |_   _(_)_ __ ___  _ __   __ _  __ _  ___ _ __ 
-" |  \| \ \ / / | '_ ` _ \| '_ \ / _` |/ _` |/ _ \ '__|
-" | |\  |\ V /| | | | | | | |_) | (_| | (_| |  __/ |   
-" |_| \_| \_/ |_|_| |_| |_| .__/ \__,_|\__, |\___|_|   
-"                         |_|          |___/           
-"
+" ooooooooo.                                           
+" `888   `Y88.                                         
+"  888   .d88'  .oooo.    .oooooooo  .ooooo.  oooo d8b 
+"  888ooo88P'  `P  )88b  888' `88b  d88' `88b `888""8P 
+"  888          .oP"888  888   888  888ooo888  888     
+"  888         d8(  888  `88bod8P'  888    .o  888     
+" o888o        `Y888""8o `8oooooo.  `Y8bod8P' d888b    
+"                        d"     YD                     
+"                        "Y88888P'                     
 
 " SETTINGS {{{
 
@@ -84,24 +93,6 @@ function FixVimpager()
     " stop this function running again
     au! VimEnter
 
-    " make search only match once per line
-    noremap / :<c-u>call MapSearch()<cr>/
-    nnoremap n nzt:echo<CR>$
-    nnoremap N Nzt:echo<CR>$
-    xnoremap n nzt:echo<CR>$
-    xnoremap N Nzt:echo<CR>$
-
-    " ctrl + c quits program
-    cnoremap <silent><c-c> <cmd>qa!<CR>
-    nnoremap <silent><c-c> <cmd>qa!<CR>
-
-    " clear search highlight
-    nnoremap <silent><esc> :noh<CR>
-
-    " bind u/d to ctrl+u/d
-    nnoremap <buffer>d     <c-d>
-    nnoremap u             <c-u>
-
     " unmap unused keys
     let l:unmap_keys = [
             \ "a", "b", "c", "d", "e", "h", "i", "l",
@@ -119,6 +110,26 @@ function FixVimpager()
     for l:key in l:unmap_keys
         exe 'noremap ' . l:key . ' <NOP>'
     endfor
+
+    " make search only match once per line
+    noremap / :<c-u>call MapSearch()<cr>/
+    nnoremap n Hnzt:echo<CR>$
+    nnoremap N k$Nzt:echo<CR>$
+    xnoremap n nzt:echo<CR>$
+    xnoremap N Nzt:echo<CR>$
+
+    " ctrl + c quits program
+    cnoremap <silent><c-c> <cmd>qa!<CR>
+    nnoremap <silent><c-c> <cmd>qa!<CR>
+
+    " clear search highlight
+    nnoremap <silent><esc> :noh<CR>
+
+    " bind u/d to ctrl+u/d
+    nnoremap <buffer>d     <c-d>
+    nnoremap u             <c-u>
+
+    xunmap y
 
 endfunction
 

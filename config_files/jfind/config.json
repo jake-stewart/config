@@ -1,0 +1,25 @@
+{
+    "selector": "",
+    "active-selector": "",
+    "history-count": 25,
+    "style": {
+        "active-source": {
+            "fg": "white",
+            "bg": "#2a2e3a",
+            "attr": ["bold"]
+        },
+        "hint": {
+            "fg": "bright_black"
+        },
+        "active-row": {
+            "bg": "#2a2e3a"
+        },
+        "active-selector": {
+            "bg": "#2a2e3a"
+        },
+        "active-hint": {
+            "fg": "white",
+            "bg": "#2a2e3a"
+        }
+    }
+}

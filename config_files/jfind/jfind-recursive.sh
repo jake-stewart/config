@@ -31,7 +31,8 @@ list_files() {
     command_exists fdfind && fd_command="fdfind"
 
     if [ -n "$fd_command" ]; then
-        (cd "$1" && fd -a -E "*.iml" --type f --exclude="{$exclude_str}")
+        (cd "$1" && \
+            "$fd_command" -a -E "*.iml" --type f --exclude="{$exclude_str}")
     else
         find "$1" -type f
     fi

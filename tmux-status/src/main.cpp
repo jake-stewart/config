@@ -104,15 +104,20 @@ int main(int argc, const char **argv) {
         color_manager.setBg("#323644");
     }
 
-    std::string colorEnv = execGetline(
-        "tmux show-environment session_color | sed 's/.*=//'"
-    );
-
-    if (colorEnv.size()) {
-        color = colorEnv.c_str();
+    if (session_title == "main") {
+        color = "cyan";
     }
     else {
-        color = "brightblack";
+        std::string colorEnv = execGetline(
+            "tmux show-environment session_color | sed 's/.*=//'"
+        );
+
+        if (colorEnv.size()) {
+            color = colorEnv.c_str();
+        }
+        else {
+            color = "brightblack";
+        }
     }
 
     BlockRow left_row = createLeftRow();

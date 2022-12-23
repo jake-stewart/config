@@ -22,7 +22,7 @@ list_files() {
     )
     exclude_str=$(printf ",%s" "${exclude[@]}")
     exclude_str=${exclude_str:1}
-    fd -a -E "*.iml" --type f --base-directory "$1" --exclude="{$exclude_str}"
+    (cd "$1" && fd -a -E "*.iml" --type f --exclude="{$exclude_str}")
 }
 
 format_files() {

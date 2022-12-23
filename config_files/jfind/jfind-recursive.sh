@@ -4,6 +4,10 @@ set -e
 OUTPUT="$HOME/.cache/jfind_out"
 [ -f "$OUTPUT" ] && rm "$OUTPUT"
 
+command_exists() {
+    type "$1" &> /dev/null
+}
+
 list_files() {
     exclude=(
         ".git"
@@ -22,7 +26,15 @@ list_files() {
     )
     exclude_str=$(printf ",%s" "${exclude[@]}")
     exclude_str=${exclude_str:1}
-    (cd "$1" && fd -a -E "*.iml" --type f --exclude="{$exclude_str}")
+
+    command_exists fd && fd_command="fd"
+    command_exists fdfind && fd_command="fdfind"
+
+    if [ -n "$fd_command" ]; then
+        (cd "$1" && fd -a -E "*.iml" --type f --exclude="{$exclude_str}")
+    else
+        find "$1" -type f
+    fi
 }
 
 format_files() {

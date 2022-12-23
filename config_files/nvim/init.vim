@@ -8,7 +8,8 @@
 
 " SETTINGS {{{1
 
-let mapleader=" "
+let g:use_coc = 0
+let mapleader = " "
 
 set termguicolors                   " enable truecolor
 set foldmethod=marker               " use {{{ and }}} for folding
@@ -408,7 +409,9 @@ Plug 'glts/vim-textobj-comment'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'junegunn/vim-easy-align', { 'on': '<plug>(EasyAlign)' }
 Plug 'uiiaoo/java-syntax.vim', { 'for': 'java' }
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+if g:use_coc
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+endif
 call plug#end()
 
 " }}}
@@ -427,40 +430,42 @@ highlight link javadelimiter none
 " }}}
 " COC SETTINGS {{{
 
-nmap <silent> gd <plug>(coc-definition)
-nmap <silent> gy <plug>(coc-type-definition)
-nmap <silent> gi <plug>(coc-implementation)
-nmap <silent> gr <plug>(coc-references)
-nmap <leader>rn  <plug>(coc-rename)
-nnoremap <silent> K :call ShowDocumentation()<cr>
+if g:use_coc
+    nmap <silent> gd <plug>(coc-definition)
+    nmap <silent> gy <plug>(coc-type-definition)
+    nmap <silent> gi <plug>(coc-implementation)
+    nmap <silent> gr <plug>(coc-references)
+    nmap <leader>rn  <plug>(coc-rename)
+    nnoremap <silent> K :call ShowDocumentation()<cr>
 
-function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
-endfunction
+    function! ShowDocumentation()
+      if CocAction('hasProvider', 'hover')
+        call CocActionAsync('doHover')
+      else
+        call feedkeys('K', 'in')
+      endif
+    endfunction
 
-inoremap <silent><expr> <tab>
-      \ pumvisible() ? "\<c-n>" :
-      \ CheckBackspace() ? "\<tab>" :
-      \ coc#refresh()
-inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\<c-h>"
+    inoremap <silent><expr> <tab>
+          \ pumvisible() ? "\<c-n>" :
+          \ CheckBackspace() ? "\<tab>" :
+          \ coc#refresh()
+    inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\<c-h>"
 
 
-" inoremap <silent><expr><backspace> "\<backspace>" . CocActionAsync('showSignatureHelp')
-" inoremap <silent><expr><space> ' ' . CocActionAsync('showSignatureHelp')
+    " inoremap <silent><expr><backspace> "\<backspace>" . CocActionAsync('showSignatureHelp')
+    " inoremap <silent><expr><space> ' ' . CocActionAsync('showSignatureHelp')
 
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+    function! CheckBackspace() abort
+      let col = col('.') - 1
+      return !col || getline('.')[col - 1]  =~# '\s'
+    endfunction
 
-inoremap <silent><expr> <c-j>
-            \ coc#refresh() . CocActionAsync('showSignatureHelp')
+    inoremap <silent><expr> <c-j>
+                \ coc#refresh() . CocActionAsync('showSignatureHelp')
 
-inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<cr>"
+    inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<cr>"
+endif
 
 " }}}
 " EASY ALIGN SETTINGS {{{

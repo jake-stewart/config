@@ -37,7 +37,7 @@ export JAVA_HOME="$JAVA_VMS/openjdk-17.0.2/Contents/Home/"
 export JDTLS_HOME="/usr/local/Cellar/jdtls/1.11.0/libexec"
 
 command_exists() {
-    type "$1" > /dev/null
+    type "$1" &> /dev/null
 }
 
 # fnm

@@ -19,7 +19,7 @@
 " SETTINGS {{{
 
 set termguicolors                   " enable truecolor
-set foldmethod=marker               " use {{{ and }}} for folding
+set foldmethod=manual               " hide automatic folds
 set clipboard^=unnamed,unnamedplus  " make vim use system clipboard
 set lazyredraw                      " run macros without updating screen
 set encoding=utf-8                  " unicode characters

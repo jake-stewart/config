@@ -1,9 +1,9 @@
 {
     "selector": "",
-    "active-selector": "",
-    "history-count": 25,
+    "active_selector": "",
+    "history_limit": 0,
     "style": {
-        "active-source": {
+        "active_item": {
             "fg": "white",
             "bg": "#2a2e3a",
             "attr": ["bold"]
@@ -11,13 +11,13 @@
         "hint": {
             "fg": "bright_black"
         },
-        "active-row": {
+        "active_row": {
             "bg": "#2a2e3a"
         },
-        "active-selector": {
+        "active_selector": {
             "bg": "#2a2e3a"
         },
-        "active-hint": {
+        "active_hint": {
             "fg": "white",
             "bg": "#2a2e3a"
         }

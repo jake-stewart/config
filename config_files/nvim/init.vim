@@ -8,7 +8,7 @@
 
 " SETTINGS {{{1
 
-let g:use_coc = 0
+let g:use_coc = 1
 let mapleader = " "
 
 set termguicolors                   " enable truecolor
@@ -48,6 +48,7 @@ set expandtab                       " expand tabs into spaces
 set shiftwidth=4                    " num spaces for tab at start of line
 set softtabstop=1                   " num spaces for tab within a line
 set smarttab                        " differentiate shiftwidth and softtabstop
+set nrformats=bin,hex,unsigned      " ignore negative dash for <c-a> and <c-x>
 
 " }}}
 " COLORSCHEME {{{
@@ -84,6 +85,18 @@ endfunction
 autocmd BufReadPost * call RestoreCursorPosition()
 
 autocmd FileType c,cpp,cs,java,php setlocal commentstring=//\ %s
+
+autocmd FileType html let b:match_words
+            \ = '<:>,<\@<=\([^/][^ \t>]*\)[^>]*\%(>\|$\):<\@<=/\1>'
+
+autocmd FileType blade let b:match_words
+            \ = '<!--:-->,<:>,<\@<=dl\>[^>]*\%(>\|$\):<\@<=d[td]\>:<\@<=/dl>,<\'
+            \ . '@<=\([^/!][^ \t>]*\)[^>]*\%(>\|$\):<\@<=/\1>,@\%(section\s*([^'
+            \ . '\,]*)\|if\|unless\|foreach\|forelse\|for\|while\|push\|can\|ca'
+            \ . 'nnot\|hasSection\|php\s*(\@!\|verbatim\|component\|slot\|prepe'
+            \ . 'nd\):@\%(else\|elseif\|empty\|break\|continue\|elsecan\|elseca'
+            \ . 'nnot\)\>:@\%(end\w\+\|stop\|show\|append\|overwrite\),{:},\[:\'
+            \ . '],(:)'
 
 " }}}
 " SNIPPETS {{{
@@ -236,9 +249,12 @@ noremap gl $
 map gm %
 nnoremap <c-p> <c-^>
 
+" stop ignorecase for * and #
+nnoremap <silent>  * :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=1<CR>n
+nnoremap <silent>  # :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=0<CR>n
+
 " I center screen all the time, zz is slow and hurts my finger
 noremap gb zz
-nnoremap m zz
 
 nnoremap <silent><leader>s z=1<CR><CR>
 
@@ -436,6 +452,8 @@ if g:use_coc
     nmap <silent> gi <plug>(coc-implementation)
     nmap <silent> gr <plug>(coc-references)
     nmap <leader>rn  <plug>(coc-rename)
+    nmap <leader>Cc   <Plug>(coc-codeaction-cursor)
+
     nnoremap <silent> K :call ShowDocumentation()<cr>
 
     function! ShowDocumentation()
@@ -472,6 +490,8 @@ endif
 
 xnoremap <leader>a <plug>(EasyAlign)
 nnoremap <leader>a <plug>(EasyAlign)
+xnoremap <leader><leader> <plug>(EasyAlign)
+nnoremap <leader><leader> <plug>(EasyAlign)
 
 " }}}
 " TREESITTER SETTINGS {{{
@@ -591,8 +611,19 @@ function! JFindTmux()
     endtry
 endfunction
 
+function! JFindLineTmux()
+    silent! !~/.config/tmux/popup-jfind-line.sh %
+    try
+        let l:contents = readfile($HOME . "/.cache/jfind_out")
+        exec "silent! norm " . l:contents[0] . "Gzozz^"
+    catch
+        return
+    endtry
+endfunction
+
 if exists('$TMUX')
     nnoremap <silent><c-f> :call JFindTmux()<cr>
+    nnoremap <silent><c-_> :call JFindLineTmux()<cr>
 else
     nnoremap <silent><c-f> :call JFind()<cr>
 endif

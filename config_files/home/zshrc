@@ -19,8 +19,10 @@ setopt INTERACTIVE_COMMENTS
 
 # history
 setopt HIST_IGNORE_SPACE
-export HISTSIZE=1000000000
-export SAVEHIST=$HISTSIZE
+HISTFILE=~/.zsh_history
+HISTSIZE=999999999
+SAVEHIST=$HISTSIZE
+
 
 # }}}
 # PROGRAM CONFIGS {{{
@@ -102,17 +104,7 @@ commandline_mode() {
 }
 zle -N commandline_mode
 bindkey -M vicmd : commandline_mode
-
-bruh() {
-    zle beginning-of-line;
-    zle zle-keymap-select;
-    zle end-of-line;
-}
-zle -N bruh
 bindkey -M viopp -s l -
-
-# bind <ctrl-f> to jfind a source
-bindkey -s '' 'jfind_source'
 
 # }}}
 # PLUGINS {{{
@@ -237,16 +229,6 @@ expand_home() {
     echo "$expanded"
 }
 
-# jfind_source() {
-#     dest=$(expand_home $(~/.config/jfind/jfind-source.sh))
-#     if [ -d "$dest" ]; then
-#         cd "$dest";
-#         [ "$dest" = "$HOME/Downloads" ] && ls -trl || ls
-#     elif [ -f "$dest" ]; then
-#         nvim "$dest"
-#     fi
-# }
-
 jfind_source() {
     if [ -n "$TMUX" ]; then
         ~/.config/tmux/popup-jfind-source.sh
@@ -255,12 +237,26 @@ jfind_source() {
     fi
     dest=$(expand_home $(cat ~/.cache/jfind_out))
     if [ -d "$dest" ]; then
+        skip_precmd
+        zle kill-buffer
+        print -s "cd '$dest'"
+        echo "cd \e[32m'$dest'\e[0m"
         cd "$dest";
         [ "$dest" = "$HOME/Downloads" ] && ls -trl || ls
+        zle accept-line
     elif [ -f "$dest" ]; then
-        nvim "$dest"
+        skip_precmd
+        zle kill-buffer
+        print -s "$EDITOR '$dest'"
+        echo "$EDITOR \e[32m'$dest'\e[0m"
+        $EDITOR "$dest"
+        zle accept-line
     fi
 }
+
+zle -N jfind_source
+bindkey -M vicmd '' jfind_source
+bindkey '' jfind_source
 
 lfcd () {
     tmp="$(mktemp)"

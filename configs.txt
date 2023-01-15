@@ -12,7 +12,10 @@ config_files/tmux/popup-scratch.sh $HOME/.config/tmux/popup-scratch.sh
 config_files/tmux/popup-switch-session.sh $HOME/.config/tmux/popup-switch-session.sh
 config_files/tmux/popup-terminal.sh $HOME/.config/tmux/popup-terminal.sh
 config_files/tmux/popup.sh $HOME/.config/tmux/popup.sh
+config_files/tmux/create-session.sh $HOME/.config/tmux/create-session.sh
 config_files/tmux/switch-session.sh $HOME/.config/tmux/switch-session.sh
+config_files/tmux/popup-jfind-line.sh $HOME/.config/tmux/popup-jfind-line.sh
+
 
 # jfind
 config_files/jfind/config.json $HOME/.config/jfind/config.json
@@ -22,6 +25,7 @@ config_files/jfind/jfind-project.sh $HOME/.config/jfind/jfind-project.sh
 config_files/jfind/jfind-recursive.sh $HOME/.config/jfind/jfind-recursive.sh
 config_files/jfind/jfind-session.sh $HOME/.config/jfind/jfind-session.sh
 config_files/jfind/jfind-source.sh $HOME/.config/jfind/jfind-source.sh
+config_files/jfind/jfind-line.sh $HOME/.config/jfind/jfind-line.sh
 
 # nvim
 config_files/nvim/init.vim $HOME/.config/nvim/init.vim

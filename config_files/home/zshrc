@@ -270,11 +270,17 @@ lfcd () {
 }
 
 cd_wrapper() {
-    [[ "$1" = "-" ]] && printf "cd: " && cd - && ls && tmux refresh-client -S && return
+    if [[ "$1" = "-" ]]; then
+        printf "cd: "
+        cd -
+        ls
+        [ -n "$TMUX" ] && tmux refresh-client -S
+        return
+    fi
     [ ! -n "$1" ] && 1=$HOME
     [ ! -e "$1" ] && echo "cd: no such file or directory: $1" > /dev/stderr && return
     [ ! -d "$1" ] && echo "cd: not a directory: $1" > /dev/stderr && return
-    cd "$1" && ls && tmux refresh-client -S 
+    cd "$1" && ls && [ -n "$TMUX" ] && tmux refresh-client -S 
 }
 
 mvcd() {

@@ -18,7 +18,6 @@
 
 " SETTINGS {{{
 
-set termguicolors                   " enable truecolor
 set foldmethod=manual               " hide automatic folds
 set clipboard^=unnamed,unnamedplus  " make vim use system clipboard
 set lazyredraw                      " run macros without updating screen
@@ -33,7 +32,7 @@ set title                           " set window title according to titlestring
 set titlestring=%t%(\ %M%)          " title, modified
 set splitright                      " open horizontal splits to the right
 set splitbelow                      " open vertical splits below
-set mouse=a                         " enable mouse
+set mouse=                          " disable mouse
 set mousemodel=extend               " remove right click menu
 set noruler                         " hide commandline ruler
 set rulerformat=%l,%c%V%=%P         " same syntax as statusline
@@ -58,28 +57,35 @@ hi Comment gui=italic cterm=italic
 hi Todo gui=italic cterm=italic
 
 " }}}
-" HIDE CURSOR {{{
-
-hi Cursor blend=100
-set guicursor+=a:Cursor/lCursor
-
-" make cursor come back when in terminal/command line mode
-au VimSuspend * set t_ve&vim
-au BufWinEnter,WinEnter * set guicursor+=a:Cursor/lCursor
-au CmdLineEnter * set guicursor-=a:Cursor/lCursor
-au CmdLineLeave * set guicursor+=a:Cursor/lCursor
-
-" }}}
-" LESS-LIKE SEARCH {{{
+" SEARCH {{{
 
 function! MapSearch()
-    cnoremap <silent><cr> <cr>:call UnmapSearch()<cr>zt$
+    set cursorline
+    cnoremap <silent><cr> <cr>:call UnmapSearch()<cr>
     cnoremap <silent><esc> <c-c>:call UnmapSearch()<cr>
 endf
 
 function! UnmapSearch()
     cunmap <cr>
     cunmap <esc>
+endf
+
+function! SearchNext()
+    if &cursorline
+        return "$n"
+    else
+        set cursorline
+        return "H$n"
+    endif
+endf
+
+function! SearchPrev()
+    if &cursorline
+        return "0N"
+    else
+        set cursorline
+        return "H0N"
+    endif
 endf
 
 " }}}
@@ -95,7 +101,7 @@ function FixVimpager()
 
     " unmap unused keys
     let l:unmap_keys = [
-            \ "a", "b", "c", "d", "e", "h", "i", "l",
+            \ "a", "b", "c", "d", "e", "h", "i", "j", "k", "l",
             \ "m", "o", "p", "r", "s", "t", "v", "w",
             \ "x", "y", "z", "A", "B", "C", "D", "E",
             \ "F", "H", "I", "J", "K", "L", "M", "O",
@@ -112,27 +118,36 @@ function FixVimpager()
     endfor
 
     " make search only match once per line
-    noremap / :<c-u>call MapSearch()<cr>/
-    nnoremap n Hnzt:echo<CR>$
-    nnoremap N k$Nzt:echo<CR>$
-    xnoremap n nzt:echo<CR>$
-    xnoremap N Nzt:echo<CR>$
+    noremap / H:<c-u>call MapSearch()<cr>/
+
+    nnoremap <silent><expr>n SearchNext()
+    nnoremap <silent><expr>N SearchPrev()
 
     " ctrl + c quits program
     cnoremap <silent><c-c> <cmd>qa!<CR>
     nnoremap <silent><c-c> <cmd>qa!<CR>
 
     " clear search highlight
-    nnoremap <silent><esc> :noh<CR>
+    nnoremap <silent><esc> :set nocul<CR>:noh<CR>L0
 
     " bind u/d to ctrl+u/d
-    nnoremap <buffer>d     <c-d>
-    nnoremap u             <c-u>
+    nnoremap <silent><buffer>d :set nocul<CR><c-d>L0
+    nnoremap <silent>u :set nocul<CR><c-u>L0
+
+    nnoremap <silent><buffer>j :set nocul<CR><c-e>L0
+    nnoremap <silent><buffer>k :set nocul<CR><c-y>L0
+
+    nnoremap <silent>gg :set nocul<CR>ggL0
+
+    nnoremap <silent><expr>zt &cul ? "zt" : ""
+    nnoremap <silent><expr>zb &cul ? "zb" : ""
+    nnoremap <silent><expr>zz &cul ? "zz" : ""
+    nnoremap <silent><expr>gb &cul ? "zz" : ""
 
     xunmap y
 
+    norm k
 endfunction
-
 " }}}
 
 " vim: foldmethod=marker

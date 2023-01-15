@@ -22,8 +22,6 @@ config_files/jfind/jfind-project.sh $HOME/.config/jfind/jfind-project.sh
 config_files/jfind/jfind-recursive.sh $HOME/.config/jfind/jfind-recursive.sh
 config_files/jfind/jfind-session.sh $HOME/.config/jfind/jfind-session.sh
 config_files/jfind/jfind-source.sh $HOME/.config/jfind/jfind-source.sh
-config_files/jfind/min_sessions.json $HOME/.config/jfind/min_sessions.json
-config_files/jfind/min_sources $HOME/.config/jfind/min_sources
 
 # nvim
 config_files/nvim/init.vim $HOME/.config/nvim/init.vim

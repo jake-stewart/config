@@ -4,22 +4,22 @@
     "history_limit": 0,
     "style": {
         "active_item": {
-            "fg": "white",
-            "bg": "#2a2e3a",
+            "fg": "bright_white",
+            "bg": 233,
             "attr": ["bold"]
         },
         "hint": {
-            "fg": "bright_black"
+            "fg": 237
         },
         "active_row": {
-            "bg": "#2a2e3a"
+            "bg": 233
         },
         "active_selector": {
-            "bg": "#2a2e3a"
+            "bg": 233
         },
         "active_hint": {
-            "fg": "white",
-            "bg": "#2a2e3a"
+            "fg": "bright_white",
+            "bg": 233
         }
     }
 }

@@ -1,5 +1,3 @@
-#!/bin/bash
-
 client_width=$(tmux display -p "#{client_width}")
 client_height=$(tmux display -p "#{client_height}")
 
@@ -31,4 +29,3 @@ tmux display-popup \
     -d "$(pwd)" \
     $border \
     "$1"
-    # "echo '\033[?25l'; $1; echo '\033[?25l'"

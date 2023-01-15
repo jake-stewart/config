@@ -11,7 +11,6 @@
 let g:use_coc = 1
 let mapleader = " "
 
-set termguicolors                   " enable truecolor
 set foldmethod=marker               " use {{{ and }}} for folding
 set lazyredraw                      " run macros without updating screen
 set clipboard^=unnamed,unnamedplus  " make vim use system clipboard
@@ -53,6 +52,7 @@ set nrformats=bin,hex,unsigned      " ignore negative dash for <c-a> and <c-x>
 " }}}
 " COLORSCHEME {{{
 
+set notermguicolors
 set background=dark
 syntax on
 colorscheme custom
@@ -223,8 +223,15 @@ nnoremap <silent><space>s ^dj^v$hpk$p
 nnoremap <silent><esc> :<C-U>noh<cr>
 
 " make scrolling more reliable (center screen + same distance)
-nnoremap <c-d> 10jzz
-nnoremap <c-u> 10kzz
+function! Scroll(direction)
+    let l:scrolloff = &scrolloff
+    set scrolloff=999
+    exe "norm 10" . a:direction
+    exe "set scrolloff=" . l:scrolloff
+endfunction
+
+nnoremap <silent> <c-d> :call Scroll("j")<CR>
+nnoremap <silent> <c-u> :call Scroll("k")<CR>
 " nnoremap <c-d> M<c-d>
 " nnoremap <c-u> M<c-u>
 
@@ -252,6 +259,10 @@ nnoremap <c-p> <c-^>
 " stop ignorecase for * and #
 nnoremap <silent>  * :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=1<CR>n
 nnoremap <silent>  # :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=0<CR>n
+
+" visual # and * don't yank to default register
+vnoremap * "zy/\V<C-R>z<CR>
+vnoremap # "zy?\V<C-R>z<CR>
 
 " I center screen all the time, zz is slow and hurts my finger
 noremap gb zz

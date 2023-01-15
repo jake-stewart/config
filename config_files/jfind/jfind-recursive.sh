@@ -53,7 +53,7 @@ jfind_command() {
     jfind \
         --hints \
         --select-hint \
-        --history="~/.cache/jfind-history/projects/$1"
+        --history="~/.cache/jfind-history/projects/$1/jfind-history"
 }
 
 root="$1"

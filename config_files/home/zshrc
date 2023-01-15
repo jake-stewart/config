@@ -269,7 +269,6 @@ lfcd () {
     ls
 }
 
-
 cd_wrapper() {
     [[ "$1" = "-" ]] && printf "cd: " && cd - && ls && tmux refresh-client -S && return
     [ ! -n "$1" ] && 1=$HOME
@@ -315,7 +314,13 @@ tmux_wrapper() {
     if [[ "$#" -gt 0 ]]; then
         tmux "$@"
     else
-        tmux new -As main
+        if tmux list-sessions -F "#S" 2>/dev/null | grep "^main$" &>/dev/null; then
+            tmux attach -t main
+        else
+            color=$(awk '/^main/{print $2}' ~/.config/tmux/sessions)
+            tmux new -s main \
+                "tmux set-environment session_color '$color'; zsh"
+        fi
     fi
 }
 
@@ -328,7 +333,7 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 alias k=' repeat_command'
-alias vi=nvim
+alias vi=nvi
 alias vim=nvim
 alias cd=cd_wrapper
 alias tmux=tmux_wrapper
@@ -345,7 +350,7 @@ alias yarn='yarn --emoji false'
 # EXPORTS {{{
 
 export EDITOR=nvim
-export PAGER=nvimpager
+export PAGER=nvimpager_wrapper
 
 # }}}
 

@@ -2,7 +2,7 @@
 config_files/home/inputrc $HOME/.config/inputrc
 
 # zsh
-config_files/zsh/zshenv $HOME/.config/zsh/.zshrc
+config_files/zsh/zshenv $HOME/.zshenv
 config_files/zsh/zshrc $HOME/.config/zsh/.zshrc
 
 # tmux

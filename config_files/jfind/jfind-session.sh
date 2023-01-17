@@ -7,7 +7,7 @@ read_sessions() {
 }
 
 jfind_command() {
-    ~/.bin/jfind \
+    jfind \
         --hints \
         --history="~/.cache/jfind-history/sessions"
 }

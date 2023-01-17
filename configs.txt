@@ -1,10 +1,12 @@
 # home
-config_files/home/inputrc $HOME/.inputrc
-config_files/home/dir_colors $HOME/.dir_colors
-config_files/home/zshrc $HOME/.zshrc
-config_files/home/tmux.conf $HOME/.tmux.conf
+config_files/home/inputrc $HOME/.config/inputrc
+
+# zsh
+config_files/zsh/zshenv $HOME/.config/zsh/.zshrc
+config_files/zsh/zshrc $HOME/.config/zsh/.zshrc
 
 # tmux
+config_files/tmux/tmux.conf $HOME/.config/tmux/tmux.conf
 config_files/tmux/popup-jfind-project.sh $HOME/.config/tmux/popup-jfind-project.sh
 config_files/tmux/popup-jfind-source.sh $HOME/.config/tmux/popup-jfind-source.sh
 config_files/tmux/popup-python.sh $HOME/.config/tmux/popup-python.sh
@@ -15,7 +17,6 @@ config_files/tmux/popup.sh $HOME/.config/tmux/popup.sh
 config_files/tmux/create-session.sh $HOME/.config/tmux/create-session.sh
 config_files/tmux/switch-session.sh $HOME/.config/tmux/switch-session.sh
 config_files/tmux/popup-jfind-line.sh $HOME/.config/tmux/popup-jfind-line.sh
-
 
 # jfind
 config_files/jfind/config.json $HOME/.config/jfind/config.json

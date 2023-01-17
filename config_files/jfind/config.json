@@ -9,7 +9,7 @@
             "attr": ["bold"]
         },
         "hint": {
-            "fg": 237
+            "fg": 238
         },
         "active_row": {
             "bg": 233

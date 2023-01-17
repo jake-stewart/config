@@ -8,7 +8,7 @@ read_sources() {
 }
 
 jfind_command() {
-    ~/.bin/jfind \
+    jfind \
         --hints \
         --select-hint \
         --history=~/.cache/jfind-history/sources

@@ -101,6 +101,16 @@ autocmd FileType blade let b:match_words
 " }}}
 " SNIPPETS {{{
 
+au FileType python inoremap <c-f><c-j> print("")<left><left>
+au FileType php inoremap <c-f><c-j> error_log("");<esc>hhi
+au FileType blade inoremap <c-f><c-j> error_log("");<esc>hhi
+au FileType javascript inoremap <c-f><c-j> console.log("");<esc>hhi
+au FileType cpp inoremap <c-f><c-j> printf("");<esc>hhi
+au FileType c inoremap <c-f><c-j> printf("");<esc>hhi
+au FileType java inoremap <c-f><c-j> System.out.println("");<esc>hhi
+au FileType bash inoremap <c-f><c-j> echo<space>""<left>
+au FileType sh inoremap <c-f><c-j> echo<space>""<left>
+
 au FileType python inoremap <c-f><c-d> print()<left>
 au FileType php inoremap <c-f><c-d> error_log();<esc>hi
 au FileType blade inoremap <c-f><c-d> error_log();<esc>hi

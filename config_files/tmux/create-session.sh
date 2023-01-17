@@ -11,14 +11,12 @@ selected="$1"
 dest=$(awk '/^'"$selected"' /{print $3}' "$CONF")
 dest=$(expand_home "$dest")
 
-window_command() {
-    echo "bash -c 'cd $path || echo && cd $dest || echo; $SHELL'"
-}
-
 window_file="$HOME/.config/tmux/session_windows/$selected"
 
 if [ -f "$window_file" ]; then
-    cat "$window_file" | while read line 
+    IFS=$'\n'
+    set -f
+    for line in $(cat < "$window_file");
     do
         name=$(echo "$line" | awk '{print $1}')
         path=$(echo "$line" | awk '{print $2}')
@@ -31,9 +29,10 @@ if [ -f "$window_file" ]; then
         if [ -z "$first" ]; then
             first=1
             tmux new-session -s "$selected" -n "$name" -c "$dest" -d \
-                "$(window_command)"
+                "bash -c 'cd \"$dest\" || echo; cd \"$path\" || echo; $SHELL'"
         else
-            tmux new-window -n "$name" -t "$selected" -d "$(window_command)"
+            tmux new-window -n "$name" -t "$selected" -d \
+                "bash -c 'cd \"$dest\" || echo; cd \"$path\" || echo; $SHELL'"
         fi
 
     done

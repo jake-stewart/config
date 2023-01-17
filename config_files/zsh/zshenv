@@ -19,10 +19,9 @@ setopt INTERACTIVE_COMMENTS
 
 # history
 setopt HIST_IGNORE_SPACE
-HISTFILE=~/.zsh_history
+HISTFILE=$ZDOTDIR/.zsh_history
 HISTSIZE=999999999
 SAVEHIST=$HISTSIZE
-
 
 # }}}
 # PROGRAM CONFIGS {{{
@@ -34,9 +33,9 @@ SAVEHIST=$HISTSIZE
 export HOMEBREW_NO_EMOJI=1
 
 # java
-JAVA_VMS="$HOME/Library/Java/JavaVirtualMachines"
-export JAVA_HOME="$JAVA_VMS/openjdk-17.0.2/Contents/Home/"
-export JDTLS_HOME="/usr/local/Cellar/jdtls/1.11.0/libexec"
+# JAVA_VMS="$HOME/Library/Java/JavaVirtualMachines"
+# export JAVA_HOME="$JAVA_VMS/openjdk-17.0.2/Contents/Home/"
+# export JDTLS_HOME="/usr/local/Cellar/jdtls/1.11.0/libexec"
 
 command_exists() {
     type "$1" &> /dev/null

@@ -29,4 +29,4 @@ cd ..
     && cp ~/.config/jfind/min_sessions.json ~/.config/jfind/sessions.json
 
 [ ! -e ~/.local/bin ] && mkdir -p ~/.local/bin
-cp ./config_files/nvimpager_wrapper ~/.local/bin
+cp ./config_files/bin/nvimpager_wrapper ~/.local/bin

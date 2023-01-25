@@ -120,16 +120,23 @@ int main(int argc, const char **argv) {
         }
     }
 
+    int padding_l = 1;
+    int padding_r = 1;
+
     BlockRow left_row = createLeftRow();
     BlockRow right_row = createRightRow();
 
-    int remaining = resize(left_row, right_row, client_width);
+    int remaining = resize(left_row, right_row, client_width - padding_l - padding_r);
 
     if (mouse_x >= 0) {
-        if (!left_row.click(mouse_x)) {
-            right_row.click(mouse_x - (client_width - right_row.length()));
+        if (!left_row.click(mouse_x - padding_l)) {
+            right_row.click(mouse_x - (client_width - right_row.length() - padding_r));
         }
         return 0;
+    }
+
+    for (int i = 0; i < padding_l; i++) {
+        printf(" ");
     }
 
     left_row.print();

@@ -17,4 +17,4 @@ jfind_command() {
     jfind --hints --select-hint
 }
 
-format_lines "$1" | jfind_command "$root" > "$OUTPUT"
+format_lines "$1" | jfind_command "$root" | tee "$OUTPUT"

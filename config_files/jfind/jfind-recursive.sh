@@ -56,10 +56,9 @@ jfind_command() {
         --history="~/.cache/jfind-history/projects/$1/jfind-history"
 }
 
-root="$1"
-[ -z "$root" ] && root=$(pwd)
+[ -n "$root" ] && root="$1" || root=$(pwd)
 
 root=${root//\~/$HOME}
 root=${root//\$HOME/$HOME}
 
-list_files "$root" | format_files | jfind_command "$root" > "$OUTPUT"
+list_files "$root" | format_files | jfind_command "$root" | tee "$OUTPUT"

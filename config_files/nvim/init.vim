@@ -57,6 +57,9 @@ set background=dark
 syntax on
 colorscheme custom
 
+hi OutOfBounds ctermfg=red ctermbg=234
+match OutOfBounds /\v%80c$@!.*/
+
 " }}}
 " UNDO HISTORY {{{
 
@@ -102,109 +105,70 @@ autocmd FileType blade let b:match_words
 " SNIPPETS {{{
 
 au FileType python inoremap <c-f><c-j> print("")<left><left>
-au FileType php inoremap <c-f><c-j> error_log("");<esc>hhi
-au FileType blade inoremap <c-f><c-j> error_log("");<esc>hhi
-au FileType javascript inoremap <c-f><c-j> console.log("");<esc>hhi
-au FileType cpp inoremap <c-f><c-j> printf("");<esc>hhi
-au FileType c inoremap <c-f><c-j> printf("");<esc>hhi
+au FileType php,blade inoremap <c-f><c-j> error_log("");<esc>hhi
+au FileType javascript,typescriptreact inoremap <c-f><c-j> console.log("");<esc>hhi
+au FileType cpp,c inoremap <c-f><c-j> printf("");<esc>hhi
 au FileType java inoremap <c-f><c-j> System.out.println("");<esc>hhi
-au FileType bash inoremap <c-f><c-j> echo<space>""<left>
-au FileType sh inoremap <c-f><c-j> echo<space>""<left>
+au FileType bash,sh inoremap <c-f><c-j> echo<space>""<left>
 
 au FileType python inoremap <c-f><c-d> print()<left>
-au FileType php inoremap <c-f><c-d> error_log();<esc>hi
-au FileType blade inoremap <c-f><c-d> error_log();<esc>hi
-au FileType javascript inoremap <c-f><c-d> console.log();<esc>hi
-au FileType cpp inoremap <c-f><c-d> printf();<esc>hi
-au FileType c inoremap <c-f><c-d> printf(printf);<esc>hi
+au FileType php,blade inoremap <c-f><c-d> error_log();<esc>hi
+au FileType javascript,typescriptreact inoremap <c-f><c-d> console.log();<esc>hi
+au FileType cpp,c inoremap <c-f><c-d> printf();<esc>hi
 au FileType java inoremap <c-f><c-d> System.out.println();<esc>hi
-au FileType bash inoremap <c-f><c-d> echo<space>
-au FileType sh inoremap <c-f><c-d> echo<space>
+au FileType bash,sh inoremap <c-f><c-d> echo<space>
 
 au FileType python inoremap <c-f><c-w> while :<left>
-au FileType php inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
-au FileType blade inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
-au FileType javascript inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
-au FileType cpp inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
-au FileType c inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
-au FileType java inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
-au FileType bash inoremap <c-f><c-w> while ; do<CR>done<esc>k$hhhi
-au FileType sh inoremap <c-f><c-w> while ; do<CR>done<esc>k$hhhi
+au FileType php,blade inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
+au FileType javascript,typescriptreact inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
+au FileType cpp,c,java inoremap <c-f><c-w> while () {<CR>}<esc>k$hhi
+au FileType bash,sh inoremap <c-f><c-w> while ; do<CR>done<esc>k$hhhi
 
 au FileType python inoremap <c-f><c-f> for :<left>
-au FileType php inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
-au FileType blade inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
-au FileType javascript inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
-au FileType cpp inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
-au FileType c inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
-au FileType java inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
-au FileType bash inoremap <c-f><c-f> for ; do<CR>done<esc>k$hhhi
-au FileType sh inoremap <c-f><c-f> for ; do<CR>done<esc>k$hhhi
+au FileType php,blade inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
+au FileType javascript,typescriptreact inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
+au FileType cpp,c,java inoremap <c-f><c-f> for () {<CR>}<esc>k$hhi
+au FileType bash,sh inoremap <c-f><c-f> for ; do<CR>done<esc>k$hhhi
 
 au FileType python inoremap <c-f><c-i> if :<esc>i
-au FileType php inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
-au FileType blade inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
-au FileType javascript inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
-au FileType cpp inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
-au FileType c inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
-au FileType java inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
-au FileType bash inoremap <c-f><c-i> if ; then<CR>fi<esc>k$bbi
-au FileType sh inoremap <c-f><c-i> if ; then<CR>fi<esc>k$bbi
+au FileType php,blade inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
+au FileType javascript,typescriptreact inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
+au FileType cpp,c,java inoremap <c-f><c-i> if () {<CR>}<esc>k$hhi
+au FileType bash,sh inoremap <c-f><c-i> if ; then<CR>fi<esc>k$bbi
 
 au FileType python inoremap <c-f><c-o> elif :<esc>i
-au FileType php inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
-au FileType blade inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
-au FileType javascript inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
-au FileType cpp inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
-au FileType c inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
-au FileType java inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
-au FileType bash inoremap <c-f><c-o> elif ; then<esc>bbi
-au FileType sh inoremap <c-f><c-o> elif ; then<esc>bbi
+au FileType php,blade inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
+au FileType javascript,typescriptreact inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
+au FileType cpp,c,java inoremap <c-f><c-o> else if () {<CR>}<esc>k$hhi
+au FileType bash,sh inoremap <c-f><c-o> elif ; then<esc>bbi
 
 au FileType python inoremap <c-f><c-e> else:<CR>
-au FileType php inoremap <c-f><c-e> else {<CR>}<esc>O
-au FileType blade inoremap <c-f><c-e> else {<CR>}<esc>O
-au FileType javascript inoremap <c-f><c-e> else {<CR>}<esc>O
-au FileType cpp inoremap <c-f><c-e> else {<CR>}<esc>O
-au FileType c inoremap <c-f><c-e> else {<CR>}<esc>O
-au FileType java inoremap <c-f><c-e> else {<CR>}<esc>O
-au FileType bash inoremap <c-f><c-e> else<CR>
-au FileType sh inoremap <c-f><c-e> else<CR>
+au FileType php,blade inoremap <c-f><c-e> else {<CR>}<esc>O
+au FileType javascript,typescriptreact inoremap <c-f><c-e> else {<CR>}<esc>O
+au FileType cpp,c,java inoremap <c-f><c-e> else {<CR>}<esc>O
+au FileType bash,sh inoremap <c-f><c-e> else<CR>
 
 " au FileType python inoremap <c-f><c-s>
-au FileType php inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
-au FileType blade inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
-au FileType javascript inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
-au FileType cpp inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
-au FileType c inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
-au FileType java inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
-au FileType bash inoremap <c-f><c-s> case in<CR>esac<esc>k$bhi<space>
-au FileType sh inoremap <c-f><c-s> case in<CR>esac<esc>k$bhi<space>
+au FileType php,blade inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
+au FileType javascript,typescriptreact inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
+au FileType cpp,c,java inoremap <c-f><c-s> switch () {<CR>}<esc>k$hhi
+au FileType bash,sh inoremap <c-f><c-s> case in<CR>esac<esc>k$bhi<space>
 
 " au FileType python inoremap <c-f><c-v>
-au FileType php inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
-au FileType blade inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
-au FileType javascript inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
-au FileType cpp inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
-au FileType c inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
-au FileType java inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
-au FileType bash inoremap <c-f><c-v> )<CR>;;<esc>k$i
-au FileType sh inoremap <c-f><c-v> )<CR>;;<esc>k$i
+au FileType php,blade inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
+au FileType javascript,typescriptreact inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
+au FileType cpp,c,java inoremap <c-f><c-v> case tmp:<CR>break;<esc>k$B"_cw
+au FileType bash,sh inoremap <c-f><c-v> )<CR>;;<esc>k$i
 
 au FileType python inoremap <c-f><c-m> def ():<esc>$F(i
-au FileType php inoremap <c-f><c-m> function () {<CR>}<esc>k$F(i
-au FileType blade inoremap <c-f><c-m> function () {<CR>}<esc>k$F(i
-au FileType javascript inoremap <c-f><c-m> function () {<CR>}<esc>k$F(i
-au FileType cpp inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
-au FileType c inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
-au FileType java inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
-au FileType bash inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
-au FileType sh inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
+au FileType php,blade inoremap <c-f><c-m> function () {<CR>}<esc>k$F(i
+au FileType javascript,typescriptreact inoremap <c-f><c-m> function () {<CR>}<esc>k$F(i
+au FileType cpp,c,java inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
+au FileType bash,sh inoremap <c-f><c-m> () {<CR>}<esc>k$F(i
 
 au FileType python inoremap <c-f><c-l> lambda:<esc>i
-au FileType php inoremap <c-f><c-l> function() {<CR>}<esc>k$hhi
-au FileType blade inoremap <c-f><c-l> function() {<CR>}<esc>k$hhi
-au FileType javascript inoremap <c-f><c-l> () => {<CR>}<esc>k$BBa
+au FileType php,blade inoremap <c-f><c-l> function() {<CR>}<esc>k$hhi
+au FileType javascript,typescriptreact inoremap <c-f><c-l> () => {<CR>}<esc>k$BBa
 " au FileType cpp inoremap <c-f><c-l>
 " au FileType c inoremap <c-f><c-l>
 " au FileType java inoremap <c-f><c-l>
@@ -546,6 +510,16 @@ let g:wordmotion_prefix = "<space>"
 " omap <c-b> <space>b
 
 " }}}
+" TMUX NAVIGATOR SETTINGS {{{
+
+let g:tmux_navigator_no_mappings = 1
+
+noremap <silent> <m-h> :<C-U>TmuxNavigateLeft<cr>
+noremap <silent> <m-j> :<C-U>TmuxNavigateDown<cr>
+noremap <silent> <m-k> :<C-U>TmuxNavigateUp<cr>
+noremap <silent> <m-l> :<C-U>TmuxNavigateRight<cr>
+
+" }}}
 " SPLITJOIN SETTINGS {{{
 
 let g:splitjoin_r_indent_align_args = 0
@@ -642,9 +616,20 @@ function! JFindLineTmux()
     endtry
 endfunction
 
+function! JFindSourceTmux()
+    silent! !~/.config/tmux/popup-jfind-source.sh
+    try
+        let l:contents = readfile($HOME . "/.cache/jfind_out")
+        exe 'edit ' . l:contents[0]
+    catch
+        return
+    endtry
+endfunction
+
 if exists('$TMUX')
     nnoremap <silent><c-f> :call JFindTmux()<cr>
     nnoremap <silent><c-_> :call JFindLineTmux()<cr>
+    nnoremap <silent><c-s> :call JFindSourceTmux()<cr>
 else
     nnoremap <silent><c-f> :call JFind()<cr>
 endif

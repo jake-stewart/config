@@ -136,6 +136,10 @@ int main(int argc, const char **argv) {
     is_zoomed     = std::stoi(argv[7]);
     mouse_x       = std::stoi(argv[8]);
 
+    if (std::string(session_title) == "popup") {
+        return 0;
+    }
+
     std::string colorEnv = execGetline(
         "tmux show-environment session_color | sed 's/.*=//'"
     );
@@ -159,9 +163,15 @@ int main(int argc, const char **argv) {
         return 0;
     }
 
+
+    printf("#[bg=%s]", DEFAULT_BG);
+    setCurrentBg(DEFAULT_BG);
+
     left_row.print();
-    printf("#[bg=default]%*s", remaining, "");
-    setCurrentBg(DEFAULT);
+
+    printf("#[bg=%s]%*s", DEFAULT_BG, remaining, "");
+    setCurrentBg(DEFAULT_BG);
+
     right_row.print();
 
     return 0;

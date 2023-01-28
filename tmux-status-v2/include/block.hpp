@@ -2,13 +2,15 @@
 #include <functional>
 #include <vector>
 
+#include "color.hpp"
+
 class BlockSpan {
     private:
         std::string m_text;
         int m_size;
         const char *m_attr = nullptr;
-        const char *m_fg = "default";
-        const char *m_bg = "default";
+        const char *m_fg = DEFAULT_FG;
+        const char *m_bg = DEFAULT_BG;
 
     public:
         BlockSpan& bold();

@@ -34,8 +34,8 @@ set splitright                      " open horizontal splits to the right
 set splitbelow                      " open vertical splits below
 set mouse=a                         " enable mouse
 set mousemodel=extend               " remove right click menu
-set noruler                         " hide commandline ruler
-set rulerformat=%l,%c%v%=%p         " same syntax as statusline
+set ruler                           " commandline ruler
+"set rulerformat=%l,%c%v%=%p         " same syntax as statusline
 set number                          " show number column
 set signcolumn=no                   " highlight line nr instead of signs
 set hlsearch                        " highlight search matches
@@ -247,15 +247,6 @@ nnoremap <silent><leader>s z=1<CR><CR>
 " use dl, yl, cl etc instead
 omap l _
 
-" TEMP: stop me from using old commands
-nnoremap dd <NOP>
-nnoremap yy <NOP>
-nnoremap cc <NOP>
-nnoremap gcc <NOP>
-nnoremap >> <NOP>
-nnoremap << <NOP>
-nnoremap <c-^> <NOP>
-
 " }}}
 " VIRTIDX {{{
 function! VirtIdx(string, idx)
@@ -437,7 +428,7 @@ if g:use_coc
     nmap <silent> gi <plug>(coc-implementation)
     nmap <silent> gr <plug>(coc-references)
     nmap <leader>rn  <plug>(coc-rename)
-    nmap <leader>Cc   <Plug>(coc-codeaction-cursor)
+    nmap <leader>a <Plug>(coc-codeaction-cursor)
 
     nnoremap <silent> K :call ShowDocumentation()<cr>
 
@@ -473,8 +464,6 @@ endif
 " }}}
 " EASY ALIGN SETTINGS {{{
 
-xnoremap <leader>a <plug>(EasyAlign)
-nnoremap <leader>a <plug>(EasyAlign)
 xnoremap <leader><leader> <plug>(EasyAlign)
 nnoremap <leader><leader> <plug>(EasyAlign)
 

@@ -177,7 +177,13 @@ skip_precmd() {
         }
     }
 }
-skip_precmd
+
+precmd() {
+    printf '\x1b[H\x1b[2J'
+    precmd() {
+        echo
+    }
+}
 
 # make ctrl+c print ^C
 TRAPINT() { 
@@ -216,6 +222,11 @@ bindkey '^I' complete-word
 # FUNCTIONS {{{
 
 alias ls='ls --color=auto'
+
+sane() {
+    stty sane
+    printf "\x1b[?25h"
+}
 
 mkcd() {
     mkdir "$1" && cd "$1"
@@ -343,7 +354,7 @@ alias vim=nvim
 alias cd=cd_wrapper
 alias tmux=tmux_wrapper
 alias netcli=/Applications/NetLinkz/peer/netcli
-alias clear="skip_precmd; echo; zz"
+alias clear="skip_precmd; clear"
 alias jmatrix="jmatrix --bg '#262832' --trail 12"
 alias lf=lfcd
 alias ls=lscat

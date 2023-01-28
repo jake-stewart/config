@@ -1,3 +1,5 @@
+#!/bin/bash
+
 client_width=$(tmux display -p "#{client_width}")
 client_height=$(tmux display -p "#{client_height}")
 

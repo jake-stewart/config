@@ -15,11 +15,11 @@ mkdir -p $HOME/.config/zsh
 [[ -e $HOME/.config/zsh/zsh-syntax-highlighting ]] || \
     git clone https://github.com/zsh-users/zsh-syntax-highlighting $HOME/.config/zsh/zsh-syntax-highlighting
 
-cd tmux-status
-g++ -std=c++2a -o tmux-status -I include src/*
+cd tmux-status-v2
+g++ -std=c++2a -O3 -o status -I include src/*
 [[ ! -e ~/.config/tmux ]] && mkdir -p ~/.config/tmux
 [[ ! -d ~/.config/tmux ]] && echo "~/.config/tmux is not a directory" && exit 1
-cp tmux-status ~/.config/tmux/status
+cp status ~/.config/tmux/status
 cd ..
 
 [ ! -e ~/.config/jfind/sources ] \

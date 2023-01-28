@@ -62,7 +62,7 @@ hi Todo gui=italic cterm=italic
 function! MapSearch()
     set cursorline
     cnoremap <silent><cr> <cr>:call UnmapSearch()<cr>
-    cnoremap <silent><esc> <c-c>:call UnmapSearch()<cr>
+    cnoremap <silent><esc> <c-c>:call UnmapSearch()<cr>L0
 endf
 
 function! UnmapSearch()

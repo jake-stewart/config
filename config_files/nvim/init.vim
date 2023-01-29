@@ -8,7 +8,7 @@
 
 " SETTINGS {{{1
 
-let g:use_coc = 1
+let g:use_coc = 0
 let mapleader = " "
 
 set foldmethod=marker               " use {{{ and }}} for folding
@@ -393,7 +393,8 @@ Plug 'tpope/vim-abolish'
 Plug 'chaoren/vim-wordmotion'
 Plug 'andrewradev/splitjoin.vim'
 Plug 'machakann/vim-swap', { 'on': '<plug>(swap-interactive)' }
-Plug 'kevinhwang91/nvim-bqf', { 'for': 'qf' }
+" Plug 'kevinhwang91/nvim-bqf', { 'for': 'qf' }
+Plug 'kevinhwang91/nvim-bqf'
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-entire'
 Plug 'kana/vim-textobj-line'
@@ -404,7 +405,21 @@ Plug 'uiiaoo/java-syntax.vim', { 'for': 'java' }
 if g:use_coc
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
 endif
+
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
+
 call plug#end()
+
+" }}}
+" LSP {{{
+
+luafile ~/.config/nvim/lsp.lua
 
 " }}}
 " NETRW SETTINGS {{{

@@ -361,6 +361,7 @@ alias ls=lscat
 alias cat=catls
 alias js-beautify='js-beautify -b end-expand'
 alias yarn='yarn --emoji false'
+alias ctags="`brew --prefix`/bin/ctags"
 
 # }}}
 # EXPORTS {{{

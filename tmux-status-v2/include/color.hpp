@@ -13,7 +13,7 @@
 #define GREY_5 "colour237"
 #define GREY_6 "colour238"
 
-#define DEFAULT_BG GREY_1
+#define DEFAULT_BG GREY_2
 #define DEFAULT_FG DEFAULT
 
 const char* getCurrentFg();

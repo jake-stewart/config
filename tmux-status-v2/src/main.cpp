@@ -97,8 +97,10 @@ BlockRow createRightRow() {
 
     // cwd
     block = new Block();
-    if (pane_path.filename().string().length()) {
-        block->add(BlockSpan(pane_path.filename().string() + " "));
+    std::string filename;
+    filename = pane_path == "/" ? "/" : pane_path.filename().string();
+    if (filename.length()) {
+        block->add(BlockSpan(filename + " "));
     }
     else {
         block->add(BlockSpan("unknown working directory ").fg(RED));

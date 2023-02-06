@@ -7,7 +7,8 @@ color=$(tmux showenv session_color | sed 's/session_color=//' 2>/dev/null);
 
 color=${color//#/\\\#} 
 
-command="tmux set-environment session_color $color"
+command="tmux set status off"
+command="$command; tmux set-environment session_color $color"
 command="$command; tmux set detach-on-destroy on"
 command="$command; zsh; exit 0"
 

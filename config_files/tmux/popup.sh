@@ -4,7 +4,7 @@ client_width=$(tmux display -p "#{client_width}")
 client_height=$(tmux display -p "#{client_height}")
 
 max_width=120
-max_height=30
+max_height=28
 
 fullscreen() {
     width=$client_width

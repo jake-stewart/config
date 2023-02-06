@@ -58,7 +58,7 @@ syntax on
 colorscheme custom
 
 hi OutOfBounds ctermfg=red ctermbg=234
-match OutOfBounds /\v%80c$@!.*/
+match OutOfBounds /\v%80c$@!/
 
 " }}}
 " UNDO HISTORY {{{
@@ -182,7 +182,7 @@ au FileType javascript,typescriptreact inoremap <c-f><c-l> () => {<CR>}<esc>k$BB
 exe 'digraph zs ' . 0x200b
 
 " toggle cursor column
-nnoremap <silent><leader>c :let &cuc = !&cuc<cr>
+nnoremap <silent><leader>cc :let &cuc = !&cuc<cr>
 
 " toggle color column
 nnoremap <silent><leader>8 :let &cc = &cc == 0 ? 80 : 0<cr>
@@ -245,7 +245,8 @@ nnoremap <silent><leader>s z=1<CR><CR>
 
 " dd, yy, cc, etc all take too long since the same key is pressed twice
 " use dl, yl, cl etc instead
-omap l _
+onoremap l _
+onoremap c l
 
 " }}}
 " VIRTIDX {{{
@@ -377,15 +378,9 @@ let g:polyglot_disabled = ['sensible']
 
 call plug#begin()
 Plug 'tpope/vim-repeat'
-" Plug 'kylechui/nvim-surround'
 Plug 'tpope/vim-surround'
-" Plug 'machakann/vim-sandwich'
-" Plug 'vimjas/vim-python-pep8-indent'
 Plug 'jwalton512/vim-blade'
-" Plug 'sheerun/vim-polyglot'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-" Plug 'catppuccin/nvim'
-" Plug 'Eandrju/cellular-automaton.nvim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-vinegar'
@@ -393,7 +388,6 @@ Plug 'tpope/vim-abolish'
 Plug 'chaoren/vim-wordmotion'
 Plug 'andrewradev/splitjoin.vim'
 Plug 'machakann/vim-swap', { 'on': '<plug>(swap-interactive)' }
-" Plug 'kevinhwang91/nvim-bqf', { 'for': 'qf' }
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-entire'
@@ -405,7 +399,6 @@ Plug 'uiiaoo/java-syntax.vim', { 'for': 'java' }
 if g:use_coc
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
 endif
-
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -522,6 +515,16 @@ noremap <silent> <m-h> :<C-U>TmuxNavigateLeft<cr>
 noremap <silent> <m-j> :<C-U>TmuxNavigateDown<cr>
 noremap <silent> <m-k> :<C-U>TmuxNavigateUp<cr>
 noremap <silent> <m-l> :<C-U>TmuxNavigateRight<cr>
+
+nnoremap <c-w>h <c-w>H
+nnoremap <c-w>j <c-w>J
+nnoremap <c-w>k <c-w>K
+nnoremap <c-w>l <c-w>L
+
+nnoremap <c-w><c-h> <c-w>H
+nnoremap <c-w><c-j> <c-w>J
+nnoremap <c-w><c-k> <c-w>K
+nnoremap <c-w><c-l> <c-w>L
 
 " }}}
 " SPLITJOIN SETTINGS {{{

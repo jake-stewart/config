@@ -10,7 +10,8 @@
 
 set incsearch
 set hidden
-set previewer ~/.config/lf/bat_preview
+# set previewer ~/.config/lf/bat_preview
+set mouse
 cmd open  # disable 'l' to 'open' files
 
 # }}}

@@ -34,6 +34,7 @@ config_files/jfind/jfind-line.sh $HOME/.config/jfind/jfind-line.sh
 # nvim
 config_files/nvim/init.vim $HOME/.config/nvim/init.vim
 config_files/nvim/custom.vim $HOME/.config/nvim/colors/custom.vim
+config_files/nvim/lsp.lua $HOME/.config/nvim/lsp.lua
 
 # nvim pager
 config_files/nvimpager/init.vim $HOME/.config/nvimpager/init.vim

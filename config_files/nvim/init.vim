@@ -48,6 +48,7 @@ set shiftwidth=4                    " num spaces for tab at start of line
 set softtabstop=1                   " num spaces for tab within a line
 set smarttab                        " differentiate shiftwidth and softtabstop
 set nrformats=bin,hex,unsigned      " ignore negative dash for <c-a> and <c-x>
+set listchars+=eol:$
 
 " }}}
 " COLORSCHEME {{{
@@ -210,8 +211,8 @@ nnoremap <silent> <c-u> :call Scroll("k")<CR>
 " nnoremap <c-u> M<c-u>
 
 " cgn on current word
-nnoremap <silent><leader>n :let @/=expand("<cword>")<CR>:set hls<CR>cgn
-nnoremap <silent><leader>N :let @/=expand("<cword>")<CR>:set hls<CR>cgN
+nnoremap <silent><leader>n :let @/='\<'.expand("<cword>").'\>'<CR>:set hls<CR>cgn
+nnoremap <silent><leader>N :let @/='\<'.expand("<cword>").'\>'<CR>:set hls<CR>cgN
 
 " cgn on selection
 xnoremap <silent><leader>n "zy:let @/=@z<CR>cgn
@@ -230,6 +231,10 @@ noremap gl $
 map gm %
 nnoremap <c-p> <c-^>
 
+nnoremap H H^
+nnoremap M M^
+nnoremap L L^
+
 " stop ignorecase for * and #
 nnoremap <silent>  * :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=1<CR>n
 nnoremap <silent>  # :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=0<CR>n
@@ -237,6 +242,9 @@ nnoremap <silent>  # :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchf
 " visual # and * don't yank to default register
 vnoremap * "zy/\V<C-R>z<CR>
 vnoremap # "zy?\V<C-R>z<CR>
+
+" # in middle of a word should jump to previous word, not start of current
+nnoremap # "_yiw#
 
 " I center screen all the time, zz is slow and hurts my finger
 noremap gb zz

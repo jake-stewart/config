@@ -29,6 +29,7 @@ let s:grey_2 = "235"
 let s:grey_3 = "236"
 let s:grey_4 = "237"
 let s:grey_5 = "238"
+let s:grey_6 = "240"
 
 " }}}
 " HL FUNCTION {{{
@@ -79,7 +80,7 @@ call HL("DiffChange",               s:yellow, "NONE",   "BOLD")
 call HL("DiffText",                 s:bg,     s:fg,     "NONE")
 call HL("Underlined",               "NONE",   "NONE",   "UNDERLINE")
 call HL("OperatorSandwichChange",   "NONE",   s:purple, "NONE")
-call HL("Comment",                  s:grey_5, "NONE",   "ITALIC")
+call HL("Comment",                  s:grey_6, "NONE",   "ITALIC")
 call HL("Exception",                s:cyan,   "NONE",   "NONE")
 call HL("Constant",                 s:cyan,   "NONE",   "NONE")
 call HL("Float",                    s:orange, "NONE",   "NONE")

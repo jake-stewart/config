@@ -258,6 +258,12 @@ onoremap c l
 nnoremap <silent><c-w> :call search("[a-zA-Z0-9_]\\@=\\<", "z")<CR>
 nnoremap <silent><c-b> :call search("[a-zA-Z0-9_]\\@=\\<", "b")<CR>
 nnoremap <silent><c-e> :call search("[a-zA-Z0-9_]\\>", "z")<CR>
+xmap <silent><c-w> <esc><c-w>mzgv`z
+xmap <silent><c-b> <esc><c-b>mzgv`z
+xmap <silent><c-e> <esc><c-e>mzgv`z
+
+" remap <c-w> since above mappings remove it
+noremap g<c-w> <c-w>
 
 " }}}
 " VIRTIDX {{{

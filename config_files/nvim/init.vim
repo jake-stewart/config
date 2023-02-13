@@ -471,6 +471,10 @@ noremap <silent> <m-h> :<C-U>TmuxNavigateLeft<cr>
 noremap <silent> <m-j> :<C-U>TmuxNavigateDown<cr>
 noremap <silent> <m-k> :<C-U>TmuxNavigateUp<cr>
 noremap <silent> <m-l> :<C-U>TmuxNavigateRight<cr>
+inoremap <silent> <m-h> <c-o>:<C-U>TmuxNavigateLeft<cr>
+inoremap <silent> <m-j> <c-o>:<C-U>TmuxNavigateDown<cr>
+inoremap <silent> <m-k> <c-o>:<C-U>TmuxNavigateUp<cr>
+inoremap <silent> <m-l> <c-o>:<C-U>TmuxNavigateRight<cr>
 
 " nnoremap <c-w>h <c-w>H
 " nnoremap <c-w>j <c-w>J

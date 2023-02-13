@@ -8,7 +8,6 @@
 
 " SETTINGS {{{1
 
-let g:use_coc = 0
 let mapleader = " "
 
 set foldmethod=marker               " use {{{ and }}} for folding
@@ -57,9 +56,6 @@ set notermguicolors
 set background=dark
 syntax on
 colorscheme custom
-
-hi OutOfBounds ctermfg=red ctermbg=234
-match OutOfBounds /\v%80c$@!/
 
 " }}}
 " UNDO HISTORY {{{
@@ -186,6 +182,7 @@ exe 'digraph zs ' . 0x200b
 nnoremap <silent><leader>cc :let &cuc = !&cuc<cr>
 
 " toggle color column
+hi ColorColumn ctermfg=NONE ctermbg=233
 nnoremap <silent><leader>8 :let &cc = &cc == 0 ? 80 : 0<cr>
 
 " visually select pasted content
@@ -211,8 +208,8 @@ nnoremap <silent> <c-u> :call Scroll("k")<CR>
 " nnoremap <c-u> M<c-u>
 
 " cgn on current word
-nnoremap <silent><leader>n :let @/='\<'.expand("<cword>").'\>'<CR>:set hls<CR>cgn
-nnoremap <silent><leader>N :let @/='\<'.expand("<cword>").'\>'<CR>:set hls<CR>cgN
+nnoremap <silent><leader>n :let @/='\C\<'.expand("<cword>").'\>'<CR>:set hls<CR>cgn
+nnoremap <silent><leader>N :let @/='\C\<'.expand("<cword>").'\>'<CR>:set hls<CR>cgN
 
 " cgn on selection
 xnoremap <silent><leader>n "zy:let @/=@z<CR>cgn
@@ -226,8 +223,8 @@ nnoremap Q @q
 
 " ^, $, and %, <c-6> are motions I use all the time
 " however, the keys are in awful positions
-noremap gh ^
-noremap gl $
+map gh ^
+map gl $
 map gm %
 nnoremap <c-p> <c-^>
 
@@ -236,15 +233,16 @@ nnoremap M M^
 nnoremap L L^
 
 " stop ignorecase for * and #
-nnoremap <silent>  * :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=1<CR>n
-nnoremap <silent>  # :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=0<CR>n
+" # in middle of a word should jump to previous word, not start of current
+nnoremap <silent> * :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=1<CR>n
+nnoremap <silent> # "_yiw:let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=0<CR>n
 
 " visual # and * don't yank to default register
 vnoremap * "zy/\V<C-R>z<CR>
 vnoremap # "zy?\V<C-R>z<CR>
 
-" # in middle of a word should jump to previous word, not start of current
-nnoremap # "_yiw#
+nnoremap <silent> gn "zyiw:let @/='\C\<'.@z.'\>'<CR>:set hls<CR>
+vnoremap <silent> gn "zy:let @/='\C'.@z<CR>:set hls<CR>
 
 " I center screen all the time, zz is slow and hurts my finger
 noremap gb zz
@@ -388,7 +386,6 @@ call plug#begin()
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'jwalton512/vim-blade'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-vinegar'
@@ -403,10 +400,6 @@ Plug 'kana/vim-textobj-line'
 Plug 'glts/vim-textobj-comment'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'junegunn/vim-easy-align', { 'on': '<plug>(EasyAlign)' }
-Plug 'uiiaoo/java-syntax.vim', { 'for': 'java' }
-if g:use_coc
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-endif
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -414,7 +407,8 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
-
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/playground'
 call plug#end()
 
 " }}}
@@ -436,61 +430,10 @@ highlight link javaidentifier none
 highlight link javadelimiter none
 
 " }}}
-" COC SETTINGS {{{
-
-if g:use_coc
-    nmap <silent> gd <plug>(coc-definition)
-    nmap <silent> gy <plug>(coc-type-definition)
-    nmap <silent> gi <plug>(coc-implementation)
-    nmap <silent> gr <plug>(coc-references)
-    nmap <leader>rn  <plug>(coc-rename)
-    nmap <leader>a <Plug>(coc-codeaction-cursor)
-
-    nnoremap <silent> K :call ShowDocumentation()<cr>
-
-    function! ShowDocumentation()
-      if CocAction('hasProvider', 'hover')
-        call CocActionAsync('doHover')
-      else
-        call feedkeys('K', 'in')
-      endif
-    endfunction
-
-    inoremap <silent><expr> <tab>
-          \ pumvisible() ? "\<c-n>" :
-          \ CheckBackspace() ? "\<tab>" :
-          \ coc#refresh()
-    inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\<c-h>"
-
-
-    " inoremap <silent><expr><backspace> "\<backspace>" . CocActionAsync('showSignatureHelp')
-    " inoremap <silent><expr><space> ' ' . CocActionAsync('showSignatureHelp')
-
-    function! CheckBackspace() abort
-      let col = col('.') - 1
-      return !col || getline('.')[col - 1]  =~# '\s'
-    endfunction
-
-    inoremap <silent><expr> <c-j>
-                \ coc#refresh() . CocActionAsync('showSignatureHelp')
-
-    inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<cr>"
-endif
-
-" }}}
 " EASY ALIGN SETTINGS {{{
 
 xnoremap <leader><leader> <plug>(EasyAlign)
 nnoremap <leader><leader> <plug>(EasyAlign)
-
-" }}}
-" TREESITTER SETTINGS {{{
-
-" function! EnableTreesitter()
-"     TSEnable highlight
-"     " TSEnable indent
-" endfunction
-" au VimEnter * call EnableTreesitter()
 
 " }}}
 " SURROUND SETTINGS {{{
@@ -507,12 +450,6 @@ nmap gs <plug>(swap-interactive)
 " WORDMOTION SETTINGS {{{
 
 let g:wordmotion_prefix = "<space>"
-" nmap <c-w> <space>w
-" nmap <c-e> <space>e
-" nmap <c-b> <space>b
-" omap <c-w> <space>w
-" omap <c-e> <space>e
-" omap <c-b> <space>b
 
 " }}}
 " TMUX NAVIGATOR SETTINGS {{{

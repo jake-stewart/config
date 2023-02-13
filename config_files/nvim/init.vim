@@ -254,6 +254,11 @@ nnoremap <silent><leader>s z=1<CR><CR>
 onoremap l _
 onoremap c l
 
+" jump words skipping symbols with ctrl
+nnoremap <silent><c-w> :call search("[a-zA-Z0-9_]\\@=\\<", "z")<CR>
+nnoremap <silent><c-b> :call search("[a-zA-Z0-9_]\\@=\\<", "b")<CR>
+nnoremap <silent><c-e> :call search("[a-zA-Z0-9_]\\>", "z")<CR>
+
 " }}}
 " VIRTIDX {{{
 function! VirtIdx(string, idx)
@@ -613,21 +618,5 @@ endfunc
 command SynID echo synIDattr(synID(line("."), col("."), 1), "name")
 
 " }}}
-
-function! NextWord()
-    call search("[a-zA-Z0-9_]\\@=\\<", "z")
-endfunction
-
-function! PrevWord()
-    call search("[a-zA-Z0-9_]\\@=\\<", "b")
-endfunction
-
-function! EndWord()
-    call search("[a-zA-Z0-9_]\\>", "z")
-endfunction
-
-nnoremap <silent><c-w> :call NextWord()<CR>
-nnoremap <silent><c-b> :call PrevWord()<CR>
-nnoremap <silent><c-e> :call EndWord()<CR>
 
 " vim: foldmethod=marker

@@ -461,15 +461,14 @@ noremap <silent> <m-j> :<C-U>TmuxNavigateDown<cr>
 noremap <silent> <m-k> :<C-U>TmuxNavigateUp<cr>
 noremap <silent> <m-l> :<C-U>TmuxNavigateRight<cr>
 
-nnoremap <c-w>h <c-w>H
-nnoremap <c-w>j <c-w>J
-nnoremap <c-w>k <c-w>K
-nnoremap <c-w>l <c-w>L
-
-nnoremap <c-w><c-h> <c-w>H
-nnoremap <c-w><c-j> <c-w>J
-nnoremap <c-w><c-k> <c-w>K
-nnoremap <c-w><c-l> <c-w>L
+" nnoremap <c-w>h <c-w>H
+" nnoremap <c-w>j <c-w>J
+" nnoremap <c-w>k <c-w>K
+" nnoremap <c-w>l <c-w>L
+" nnoremap <c-w><c-h> <c-w>H
+" nnoremap <c-w><c-j> <c-w>J
+" nnoremap <c-w><c-k> <c-w>K
+" nnoremap <c-w><c-l> <c-w>L
 
 " }}}
 " SPLITJOIN SETTINGS {{{
@@ -614,5 +613,21 @@ endfunc
 command SynID echo synIDattr(synID(line("."), col("."), 1), "name")
 
 " }}}
+
+function! NextWord()
+    call search("[a-zA-Z0-9_]\\@=\\<", "z")
+endfunction
+
+function! PrevWord()
+    call search("[a-zA-Z0-9_]\\@=\\<", "b")
+endfunction
+
+function! EndWord()
+    call search("[a-zA-Z0-9_]\\>", "z")
+endfunction
+
+nnoremap <silent><c-w> :call NextWord()<CR>
+nnoremap <silent><c-b> :call PrevWord()<CR>
+nnoremap <silent><c-e> :call EndWord()<CR>
 
 " vim: foldmethod=marker
